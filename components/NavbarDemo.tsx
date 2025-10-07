@@ -1,0 +1,295 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import {
+    Navbar,
+    NavBody,
+    NavItems,
+    MobileNav,
+    NavbarLogo,
+    NavbarButton,
+    MobileNavHeader,
+    MobileNavToggle,
+    MobileNavMenu,
+} from "@/components/ui/resizable-navbar";
+import { Bell, LogOut, Moon, Sun, User, Search } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useTheme } from "next-themes";
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+
+
+export function NavbarDemo() {
+    const [isMounted, setIsMounted] = useState(false);
+    const [user, setUser] = useState<any>(null);
+    const [role, setRole] = useState<"admin" | "student" | null>(null);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [profileUrl, setProfileUrl] = useState<string | null>(null);
+    const [userData, setUserData] = useState<any>(null);
+
+    const router = useRouter();
+    const { setTheme } = useTheme();
+
+    useEffect(() => {
+        setIsMounted(true);
+
+        const fetchUser = async () => {
+            const supabase = createClient();
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session?.user) return;
+
+            setUser(session.user);
+
+            const { data: userData, error } = await supabase
+                .from("users")
+                .select("first_name, last_name, profile_picture, role")
+                .eq("id", session.user.id)
+                .single();
+
+            if (error) {
+                console.error("Error fetching user profile:", error.message);
+                return;
+            }
+
+            if (userData) {
+                setUserData(userData); // ✅ use userData here
+
+                setRole(userData.role);
+                if (userData.profile_picture) {
+                    const { data: publicUrlData } = supabase.storage
+                        .from("avatars")
+                        .getPublicUrl(userData.profile_picture);
+                    if (publicUrlData?.publicUrl) setProfileUrl(publicUrlData.publicUrl);
+                }
+            }
+        };
+
+        fetchUser();
+    }, []);
+
+    const handleLogout = async () => {
+        const supabase = createClient();
+        await supabase.auth.signOut();
+        router.push("/auth/login");
+    };
+
+    const fullName =
+        user?.user_metadata?.first_name && user?.user_metadata?.last_name
+            ? `${user.user_metadata.first_name} ${user.user_metadata.last_name}`
+            : user?.email;
+
+    // Navigation items
+    const loggedInNavItems =
+        role === "admin"
+            ? [{ name: "Dashboard", link: "/admin/dashboard" }]
+            : [
+                { name: "Explore Courses", link: "/courses" },
+                { name: "Explore Internships", link: "/internships" },
+                { name: "My Journey", link: "/student/my-journey" },
+                { name: "Certificates", link: "/student/certificates" },
+            ];
+
+    const nonLoggedInNavItems = [
+        { name: "Explore Courses", link: "/courses" },
+        { name: "Explore Internships", link: "/internships" },
+        { name: "Contact", link: "/contact" },
+    ];
+
+    // After fetching userData and setting role/profileUrl
+
+    const avatarUrl = (() => {
+        // 1. Supabase uploaded avatar
+        if (profileUrl && !profileUrl.includes("https://lh3.googleusercontent.com")) return profileUrl;
+
+        // 2. Google avatar (anywhere in the string)
+        if (userData?.profile_picture?.includes("https://lh3.googleusercontent.com")) {
+            return "https://dhyeneqgxucokgtxiyaj.supabase.co/storage/v1/object/public/avatars/avatar-fallback.jpg";
+        }
+
+        // 3. Fallback
+        return "https://dhyeneqgxucokgtxiyaj.supabase.co/storage/v1/object/public/avatars/avatar-fallback.jpg";
+    })();
+
+
+
+    return (
+        <div
+            className="sticky top-0 z-50 w-full transition-colors duration-500
+    backdrop-blur-xl border-b border-white/20 dark:border-white/10
+    bg-gradient-to-r from-[#fff8f0]/70 via-[#fff0f8]/60 to-[#f0f4ff]/70
+    dark:from-[#0f0a1a]/80 dark:via-[#1a1025]/80 dark:to-[#0f0a1a]/80"
+        >
+
+            <Navbar className="h-16 px-4 md:px-6 lg:px-8 ">
+                <NavBody className="h-full items-center">
+                    <NavbarLogo />
+
+                    {/* Nav Items */}
+                    {isMounted && (
+                        <NavItems
+                            items={user ? loggedInNavItems : nonLoggedInNavItems}
+                        />
+                    )}
+
+
+                    <div className="flex items-center gap-4 ml-auto h-full">
+
+
+
+                        {/* Theme Toggle */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="relative flex h-9 w-9 items-center justify-center rounded-md bg-transparent text-muted-foreground shadow-sm hover:bg-accent hover:text-foreground transition-all duration-300">
+                                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                                    <span className="sr-only">Toggle theme</span>
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        {/* Auth Buttons */}
+                        {/* Logged-in User Avatar */}
+                        {user ? (
+                            <Avatar
+                                className="cursor-pointer w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600"
+                                onClick={() => router.push("/account")}
+                            >
+                                <AvatarImage src={avatarUrl} alt={fullName ?? "User"} />
+                            </Avatar>
+                        ) : (
+                            <>
+                                <NavbarButton
+                                    variant="primary"
+                                    onClick={() => router.push("/auth/login")}
+                                >
+                                    Login
+                                </NavbarButton>
+                                <NavbarButton
+                                    variant="secondary"
+                                    onClick={() => router.push("/auth/sign-up")}
+                                >
+                                    Sign up for free
+                                </NavbarButton>
+                            </>
+                        )}
+                    </div>
+
+                </NavBody>
+
+                {/* Mobile Nav */}
+                <MobileNav>
+                    <MobileNavHeader className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[#fff8f0]/80 via-[#fff0f8]/70 to-[#f0f4ff]/80 dark:from-[#0f0a1a]/80 dark:via-[#1a1025]/80 dark:to-[#0f0a1a]/80  rounded-b-xl">
+
+                        <NavbarLogo />
+
+                        <div className="flex items-center gap-3">
+                            {/* User Avatar
+                            <Avatar
+                                className="cursor-pointer w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600 hover:scale-105 transition-transform"
+                                onClick={() => router.push("/account")}
+                            >
+                                <AvatarImage src={avatarUrl} alt={fullName ?? "User"} />
+                            </Avatar> */}
+
+                            {user ? (
+                                <Avatar
+                                    className="cursor-pointer w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600"
+                                    onClick={() => router.push("/account")}
+                                >
+                                    <AvatarImage src={avatarUrl} alt={fullName ?? "User"} />
+                                </Avatar>
+                            )
+                                : <></>}
+
+                            {/* Theme Toggle */}
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button className="relative flex h-9 w-9 items-center justify-center rounded-full bg-[#fff0f8]/70 dark:bg-[#1a1025]/80 text-[#1a1025] dark:text-[#f0f4ff] shadow-sm hover:bg-[#f0e0f0]/80 dark:hover:bg-[#2a1a35]/80 transition-all duration-300">
+                                        <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                                        <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                                        <span className="sr-only">Toggle theme</span>
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    align="end"
+                                    className="bg-[#fff8f0]/90 dark:bg-[#0f0a1a]/90 rounded-md shadow-lg border border-[#e8dce8]/50 dark:border-[#2a1a35]/50"
+                                >
+                                    <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+
+                            {/* Hamburger */}
+                            <MobileNavToggle
+                                isOpen={isMobileMenuOpen}
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            />
+                        </div>
+
+                    </MobileNavHeader>
+
+                    <MobileNavMenu
+                        isOpen={isMobileMenuOpen}
+                        onClose={() => setIsMobileMenuOpen(false)}
+                        className="bg-gradient-to-b from-[#fff8f0]/80 via-[#fff0f8]/70 to-[#f0f4ff]/80 dark:from-[#0f0a1a]/80 dark:via-[#1a1025]/80 dark:to-[#0f0a1a]/80 p-4 rounded-b-xl shadow-lg space-y-3"
+                    >
+                        {/* Navigation Links */}
+                        {isMounted &&
+                            (user ? loggedInNavItems : nonLoggedInNavItems).map((item, idx) => (
+                                <a
+                                    key={`mobile-link-${idx}`}
+                                    href={item.link}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="block px-4 py-2 rounded-md text-[#1a1025] dark:text-[#f0f4ff] hover:bg-[#fff0f8]/60 dark:hover:bg-[#2a1a35]/70 transition"
+                                >
+                                    {item.name}
+                                </a>
+                            ))}
+
+                        {/* Auth Buttons */}
+                        {!user && (
+                            <div className="flex flex-col gap-3 mt-4">
+                                <button
+                                    onClick={() => {
+                                        setIsMobileMenuOpen(false);
+                                        router.push("/auth/login");
+                                    }}
+                                    className="w-full text-left px-4 py-2 rounded-md bg-[#ff8c42] text-white hover:bg-[#ff944e] transition"
+                                >
+                                    Login
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setIsMobileMenuOpen(false);
+                                        router.push("/auth/signup");
+                                    }}
+                                    className="w-full text-left px-4 py-2 rounded-md border border-[#ff8c42] text-[#ff8c42] hover:bg-[#fff4eb] dark:hover:bg-[#1a1025]/70 transition"
+                                >
+                                    Sign up for free
+                                </button>
+                            </div>
+                        )}
+                    </MobileNavMenu>
+                </MobileNav>
+
+
+            </Navbar>
+        </div>
+    );
+}

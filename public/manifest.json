@@ -1,0 +1,84 @@
+{
+    "name": "VirtiLearn - Affordable Courses & Internships for Engineering Students",
+    "short_name": "VirtiLearn",
+    "description": "Get top internships and affordable courses every engineering student can access. VirtiLearn helps you learn coding, web development, AI/ML, data science, and land real internships with hands-on projects. Upgrade your skills and career without breaking the bank.",
+    "lang": "en-US",
+    "dir": "ltr",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#ffffff",
+    "theme_color": "#a855f7",
+    "categories": [
+        "education",
+        "career",
+        "technology",
+        "software",
+        "training",
+        "internship",
+        "courses"
+    ],
+    "serviceworker": {
+        "src": "/service-worker.js",
+        "scope": "/",
+        "type": "classic"
+    },
+    "icons": [
+        {
+            "src": "/images/Favicon.png",
+            "sizes": "72x72",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/Favicon.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/Favicon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/Favicon.png",
+            "sizes": "384x384",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/Favicon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Courses",
+            "short_name": "Courses",
+            "description": "Explore top VirtiLearn courses",
+            "url": "/courses",
+            "icons": [
+                {
+                    "src": "/images/Favicon.png",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "Internships",
+            "short_name": "Internships",
+            "description": "Browse internships and hands-on projects",
+            "url": "/internships",
+            "icons": [
+                {
+                    "src": "/images/Favicon.png",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ],
+    "related_applications": [],
+    "prefer_related_applications": false
+}
