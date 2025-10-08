@@ -44,7 +44,7 @@ export default function ContactPage() {
                     <br />
                     Or email us directly at{" "}
                     <span className="font-semibold text-yellow-600 dark:text-yellow-400">
-                        support@virtilearn.in
+                        virtilearn@gmail.com
                     </span>
                 </p>
 
