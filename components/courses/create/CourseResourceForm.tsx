@@ -26,27 +26,40 @@ export function CourseResourcesForm({
 }: CourseResourcesFormProps) {
     const [ebook, setEbook] = useState<File | null>(defaultValues?.ebook || null);
     const [projectZip, setProjectZip] = useState<File | null>(defaultValues?.projectZip || null);
-
     const [ebookUrl, setEbookUrl] = useState<string | null>(defaultValues?.ebookUrl || null);
     const [projectZipUrl, setProjectZipUrl] = useState<string | null>(defaultValues?.projectZipUrl || null);
 
-    // Notify parent whenever anything changes
+    // ✅ Initialize only once when defaultValues load (avoid infinite loop)
     useEffect(() => {
-        onChange?.({
-            ebook,
-            projectZip,
-            ebookUrl,
-            projectZipUrl,
-        });
-    }, [ebook, projectZip, ebookUrl, projectZipUrl, onChange]);
+        if (defaultValues) {
+            setEbook(defaultValues.ebook || null);
+            setProjectZip(defaultValues.projectZip || null);
+            setEbookUrl(defaultValues.ebookUrl || null);
+            setProjectZipUrl(defaultValues.projectZipUrl || null);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // only run once when the form mounts
 
+    // ✅ Call onChange only when user actually selects/changes a file
     const handleFileChange = (type: "ebook" | "projectZip", file: File | null) => {
         if (type === "ebook") {
             setEbook(file);
-            if (file) setEbookUrl(null); // Clear previous URL if new file selected
+            if (file) setEbookUrl(null);
+            onChange?.({
+                ebook: file,
+                projectZip,
+                ebookUrl: file ? null : ebookUrl,
+                projectZipUrl,
+            });
         } else {
             setProjectZip(file);
-            if (file) setProjectZipUrl(null); // Clear previous URL if new file selected
+            if (file) setProjectZipUrl(null);
+            onChange?.({
+                ebook,
+                projectZip: file,
+                ebookUrl,
+                projectZipUrl: file ? null : projectZipUrl,
+            });
         }
     };
 
@@ -67,7 +80,10 @@ export function CourseResourcesForm({
                     <p className="text-sm text-muted-foreground">Selected: {ebook.name}</p>
                 ) : ebookUrl ? (
                     <p className="text-sm text-muted-foreground">
-                        Current file: <a href={ebookUrl} target="_blank" className="underline text-blue-600">View Ebook</a>
+                        Current file:{" "}
+                        <a href={ebookUrl} target="_blank" className="underline text-blue-600">
+                            View Ebook
+                        </a>
                     </p>
                 ) : (
                     <p className="text-sm text-muted-foreground">❌ No ebook uploaded</p>
@@ -87,7 +103,10 @@ export function CourseResourcesForm({
                     <p className="text-sm text-muted-foreground">Selected: {projectZip.name}</p>
                 ) : projectZipUrl ? (
                     <p className="text-sm text-muted-foreground">
-                        Current file: <a href={projectZipUrl} target="_blank" className="underline text-blue-600">View Project ZIP</a>
+                        Current file:{" "}
+                        <a href={projectZipUrl} target="_blank" className="underline text-blue-600">
+                            View Project ZIP
+                        </a>
                     </p>
                 ) : (
                     <p className="text-sm text-muted-foreground">❌ No project zip uploaded</p>
@@ -99,7 +118,18 @@ export function CourseResourcesForm({
                 <Button variant="outline" onClick={onBack}>
                     Back
                 </Button>
-                <Button onClick={onNext}>Save & Continue</Button>
+                <Button
+                    onClick={() =>
+                        onNext?.({
+                            ebook,
+                            projectZip,
+                            ebookUrl,
+                            projectZipUrl,
+                        })
+                    }
+                >
+                    Save & Continue
+                </Button>
             </div>
         </div>
     );

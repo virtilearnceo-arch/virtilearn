@@ -201,7 +201,7 @@ export function CourseContentForm({
             <h2 className="text-xl font-bold">📚 Course Content</h2>
 
             {sections.map((section, sIndex) => (
-                <Card key={sIndex} className="bg-muted/20">
+                <Card key={sIndex} className="bg-muted/20 dark:bg-muted-dark/20">
                     <CardHeader>
                         <CardTitle>Section {sIndex + 1}</CardTitle>
                         <Input
@@ -214,18 +214,26 @@ export function CourseContentForm({
 
                     <CardContent className="space-y-6">
                         {section.lessons.map((lesson, lIndex) => (
-                            <div key={lIndex} className="space-y-4 border p-4 rounded-md bg-white">
-                                <h3 className="font-medium">Lesson {lIndex + 1}</h3>
+                            <div
+                                key={lIndex}
+                                className="space-y-4 border p-4 rounded-md bg-white dark:bg-gray-800"
+                            >
+                                <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                                    Lesson {lIndex + 1}
+                                </h3>
                                 <Input
                                     placeholder="Lesson title"
                                     value={lesson.title}
                                     onChange={(e) =>
                                         handleLessonChange(sIndex, lIndex, "title", e.target.value)
                                     }
+                                    className="dark:bg-gray-700 dark:text-gray-100"
                                 />
 
                                 <div>
-                                    <label className="font-semibold mb-2 block">📝 Markdown Description</label>
+                                    <label className="font-semibold mb-2 block text-gray-900 dark:text-gray-100">
+                                        📝 Markdown Description
+                                    </label>
                                     <VditorEditor
                                         value={lesson.description}
                                         onChange={(val) =>
@@ -235,7 +243,9 @@ export function CourseContentForm({
                                 </div>
 
                                 <div>
-                                    <label className="font-semibold mb-2 block">💡 Suggestions</label>
+                                    <label className="font-semibold mb-2 block text-gray-900 dark:text-gray-100">
+                                        💡 Suggestions
+                                    </label>
                                     <VditorEditor
                                         value={lesson.suggestion}
                                         onChange={(val) =>
@@ -245,7 +255,9 @@ export function CourseContentForm({
                                 </div>
 
                                 <div className="space-y-2">
-                                    <h4 className="font-semibold">📎 Reference Links</h4>
+                                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">
+                                        📎 Reference Links
+                                    </h4>
                                     {lesson.links.map((link, linkIndex) => (
                                         <div key={linkIndex} className="flex items-center gap-2">
                                             <Input
@@ -254,6 +266,7 @@ export function CourseContentForm({
                                                 onChange={(e) =>
                                                     handleLinkChange(sIndex, lIndex, linkIndex, "title", e.target.value)
                                                 }
+                                                className="dark:bg-gray-700 dark:text-gray-100"
                                             />
                                             <Input
                                                 placeholder="URL"
@@ -261,6 +274,7 @@ export function CourseContentForm({
                                                 onChange={(e) =>
                                                     handleLinkChange(sIndex, lIndex, linkIndex, "url", e.target.value)
                                                 }
+                                                className="dark:bg-gray-700 dark:text-gray-100"
                                             />
                                             <Button
                                                 type="button"
@@ -306,6 +320,7 @@ export function CourseContentForm({
                         </Button>
                     </CardFooter>
                 </Card>
+
             ))}
 
             <div className="flex items-center justify-between">

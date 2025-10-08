@@ -107,7 +107,7 @@ export function CourseSubmitPreview({
                 await supabase.from("course_features").delete().eq("course_id", newCourseId);
                 await supabase.from("course_data").delete().eq("course_id", newCourseId);
                 await supabase.from("course_instructors").delete().eq("course_id", newCourseId);
-                await supabase.from("course_resources").delete().eq("course_id", newCourseId);
+                // await supabase.from("course_resources").delete().eq("course_id", newCourseId);
 
                 await insertRelatedData(newCourseId, resources);
                 toast.success("✅ Course updated successfully.");
@@ -230,36 +230,72 @@ export function CourseSubmitPreview({
         let ebookUrl = resources?.ebookUrl || null;
         let projectZipUrl = resources?.projectZipUrl || null;
 
+        // 🧠 Fetch old resources to preserve them if not re-uploaded
+        const { data: existingResources } = await supabase
+            .from("course_resources")
+            .select("type, file_url")
+            .eq("course_id", courseId);
+
+        const existingEbook = existingResources?.find((r) => r.type === "ebook");
+        const existingProject = existingResources?.find((r) => r.type === "project");
+
+        // 🧠 Upload new ebook if provided, else keep old one
         if (resources?.ebook) {
             const { data: ebookUpload, error: ebookError } = await supabase.storage
                 .from("ebooks")
-                .upload(`courses/${courseId}/ebook-${Date.now()}.pdf`, resources.ebook, { cacheControl: "3600", upsert: true });
+                .upload(`courses/${courseId}/ebook-${Date.now()}.pdf`, resources.ebook, {
+                    cacheControl: "3600",
+                    upsert: true,
+                });
 
             if (!ebookError && ebookUpload?.path) {
                 ebookUrl = supabase.storage.from("ebooks").getPublicUrl(ebookUpload.path).data.publicUrl;
-            } else console.error("Ebook upload failed:", ebookError);
+            } else {
+                console.error("Ebook upload failed:", ebookError);
+            }
+        } else if (!ebookUrl && existingEbook) {
+            ebookUrl = existingEbook.file_url;
         }
 
+        // 🧠 Upload new project ZIP if provided, else keep old one
         if (resources?.projectZip) {
             const { data: projectUpload, error: projectError } = await supabase.storage
                 .from("projects")
-                .upload(`courses/${courseId}/project-${Date.now()}.zip`, resources.projectZip, { cacheControl: "3600", upsert: true });
+                .upload(`courses/${courseId}/project-${Date.now()}.zip`, resources.projectZip, {
+                    cacheControl: "3600",
+                    upsert: true,
+                });
 
             if (!projectError && projectUpload?.path) {
                 projectZipUrl = supabase.storage.from("projects").getPublicUrl(projectUpload.path).data.publicUrl;
-            } else console.error("Project upload failed:", projectError);
+            } else {
+                console.error("Project upload failed:", projectError);
+            }
+        } else if (!projectZipUrl && existingProject) {
+            projectZipUrl = existingProject.file_url;
         }
 
-        // Only insert if URL exists
-        const resourcesToInsert = [];
-        if (ebookUrl) resourcesToInsert.push({ course_id: courseId, type: "ebook", file_url: ebookUrl });
-        if (projectZipUrl) resourcesToInsert.push({ course_id: courseId, type: "project", file_url: projectZipUrl });
+        // ✅ Use upsert to update existing or insert new
+        const resourcesToUpsert = [];
+        if (ebookUrl)
+            resourcesToUpsert.push({
+                course_id: courseId,
+                type: "ebook",
+                file_url: ebookUrl,
+            });
+        if (projectZipUrl)
+            resourcesToUpsert.push({
+                course_id: courseId,
+                type: "project",
+                file_url: projectZipUrl,
+            });
 
-        if (resourcesToInsert.length > 0) {
-            await supabase.from("course_resources").insert(resourcesToInsert);
+        if (resourcesToUpsert.length > 0) {
+            await supabase.from("course_resources").upsert(resourcesToUpsert, {
+                onConflict: "course_id,type",
+            });
         }
     };
-
 
 
 
@@ -346,7 +382,7 @@ export function CourseSubmitPreview({
             </Card>
 
             {/* Features */}
-            <Card>
+            {/* <Card>
                 <CardHeader>
                     <CardTitle>✨ Features</CardTitle>
                 </CardHeader>
@@ -357,7 +393,7 @@ export function CourseSubmitPreview({
                             : "No features added"}
                     </ul>
                 </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Resources */}
             <Card>

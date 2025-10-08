@@ -39,8 +39,10 @@ export function InternshipSubmitPreview({
 
         try {
             // Prepare payload
+            // ✅ Ensure correct payload keys for DB columns
             const payload = {
-                ...internshipInfo,
+                title: internshipInfo.title,
+                description: internshipInfo.description,
                 categories: Array.isArray(internshipInfo.categories)
                     ? internshipInfo.categories
                     : internshipInfo.categories
@@ -51,7 +53,20 @@ export function InternshipSubmitPreview({
                     : internshipInfo.tags
                         ? internshipInfo.tags.split(",").map((t: string) => t.trim())
                         : [],
+                price: internshipInfo.price ?? 0,
+                estimated_price: internshipInfo.estimated_price ?? 0,
+                level: internshipInfo.level ?? "beginner",
+                thumbnail_url: internshipInfo.thumbnail_url ?? null,
+                demo_url: internshipInfo.demo_url ?? null,
+                duration: internshipInfo.duration ?? null,
+                skills: internshipInfo.skills ?? [],
+                certification: internshipInfo.certification ?? true,
+                max_seats: internshipInfo.max_seats ?? null,
+                language: internshipInfo.language ?? "English",
+                subtitles: internshipInfo.subtitles ?? [],
+                updated_at: new Date().toISOString(),
             };
+
 
             let internshipId: string;
 
