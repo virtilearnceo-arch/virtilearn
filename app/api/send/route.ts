@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     } = body;
 
     const { data, error } = await resend.emails.send({
-      from: "Skillveta <no-reply@skillveta.in>",
+      from: "VirtiLearn <no-reply@virtilearn.in>",
       to: [email],
       subject: `🎉 Enrollment Confirmed: ${courseName}`,
       react: EmailTemplate({

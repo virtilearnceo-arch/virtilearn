@@ -61,7 +61,7 @@ export async function POST(req: Request) {
   if (user?.email && course) {
     try {
      await resend.emails.send({
-  from: "VirtiLearn <no-reply@skillveta.in>",
+  from: "VirtiLearn <no-reply@virtilearn.in>",
   to: user.email,
   subject: `🎉 Enrollment Confirmed: ${course.name}`,
   react: EmailTemplate({

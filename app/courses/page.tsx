@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: "VirtiLearn Courses - Learn Programming, AI & More",
         description: "Explore the best online courses in programming, web development, AI/ML, and data science.",
-        url: "https://skillveta.com/courses",
+        url: "https://www.virtilearn.in/courses",
         siteName: "VirtiLearn",
         images: [
             {

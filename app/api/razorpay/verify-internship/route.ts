@@ -119,7 +119,7 @@ if (enrollError) {
   if (user?.email && internship) {
     try {
     await resend.emails.send({
-  from: "Skillveta <no-reply@skillveta.in>",
+  from: "VirtiLearn <no-reply@virtilearn.in>",
   to: user.email,
   subject: `🎉 Enrollment Confirmed: ${internship.title}`,
   react: EmailTemplate({
