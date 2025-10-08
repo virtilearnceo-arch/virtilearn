@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     // --- Send Email ---
     const { error: emailError } = await resend.emails.send({
       from: "VirtiLearn Team <contact@virtilearn.in>",
-      to: ["shindeprem102@gmail.com"],
+      to: ["virtilearn@gmail.com"],
       subject: `New Contact Form Submission from VirtiLearn ${name}`,
       react: ContactEmailTemplate({ type: "contact", name, email, message }),
     });

@@ -19,7 +19,6 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                 <NavUser
                     user={{
                         name: "Admin",
-                        // email: "shindeprem102@gmail.com",
                         avatar: `https://api.dicebear.com/7.x/initials/svg?seed=Admin`,
                     }}
                 />

@@ -113,11 +113,11 @@ export function NavbarDemo() {
 
         // 2. Google avatar (anywhere in the string)
         if (userData?.profile_picture?.includes("https://lh3.googleusercontent.com")) {
-            return "https://dhyeneqgxucokgtxiyaj.supabase.co/storage/v1/object/public/avatars/avatar-fallback.jpg";
+            return "https://mgakimsdodrycekkmbxg.supabase.co/storage/v1/object/public/avatars/avatar-fallback.png";
         }
 
         // 3. Fallback
-        return "https://dhyeneqgxucokgtxiyaj.supabase.co/storage/v1/object/public/avatars/avatar-fallback.jpg";
+        return "https://mgakimsdodrycekkmbxg.supabase.co/storage/v1/object/public/avatars/avatar-fallback.png";
     })();
 
 

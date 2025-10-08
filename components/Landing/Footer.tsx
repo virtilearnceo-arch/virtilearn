@@ -6,23 +6,28 @@ import Link from "next/link";
 const socialMedia = [
     {
         name: "YouTube",
-        href: "https://youtube.com/@skillveta?si=CU-6JZlgSG_5Dx2M",
-        src: "https://dhyeneqgxucokgtxiyaj.supabase.co/storage/v1/object/public/avatars/youtube-color-svgrepo-com.svg",
+        href: "https://www.youtube.com/@virtilearn",
+        src: "https://mgakimsdodrycekkmbxg.supabase.co/storage/v1/object/public/avatars/youtube-color-svgrepo-com.svg",
     },
     {
         name: "LinkedIn",
-        href: "https://www.linkedin.com/company/skillveta-edu",
-        src: "https://dhyeneqgxucokgtxiyaj.supabase.co/storage/v1/object/public/avatars/linkedin-svgrepo-com.svg",
+        href: "https://www.linkedin.com/company/virtilearn",
+        src: "https://mgakimsdodrycekkmbxg.supabase.co/storage/v1/object/public/avatars/linkedin-svgrepo-com.svg",
     },
     {
         name: "Instagram",
-        href: "https://www.instagram.com/skillveta.in?igsh=MWNicHRuN243NjFycQ==",
-        src: "https://dhyeneqgxucokgtxiyaj.supabase.co/storage/v1/object/public/avatars/instagram-svgrepo-com.svg",
+        href: "https://www.instagram.com/virtilearnx/",
+        src: "https://mgakimsdodrycekkmbxg.supabase.co/storage/v1/object/public/avatars/instagram-svgrepo-com.svg",
     },
+    // {
+    //     name: "Telegram",
+    //     href: "https://t.me/boost/Skillveta",
+    //     src: "https://dhyeneqgxucokgtxiyaj.supabase.co/storage/v1/object/public/avatars/telegram-svgrepo-com.svg",
+    // },
     {
-        name: "Telegram",
-        href: "https://t.me/boost/Skillveta",
-        src: "https://dhyeneqgxucokgtxiyaj.supabase.co/storage/v1/object/public/avatars/telegram-svgrepo-com.svg",
+        name: "Whatsapp",
+        href: "https://www.whatsapp.com/channel/0029Vb7TOAEDDmFTIKKIh82q",
+        src: "https://mgakimsdodrycekkmbxg.supabase.co/storage/v1/object/public/avatars/whatsapp.png",
     },
 ];
 
@@ -139,6 +144,15 @@ export default function Footer() {
                 </div>
 
             </div>
+
+            <div className="absolute bottom-4 right-4 text-[10px] flex items-center gap-1 font-medium transition-all cursor-pointer">
+                <span className="text-gray-500 dark:text-gray-300">Built with ❤️ by</span>
+                <Image src="/images/gokutriedcoding.png" alt="GokuTriedCoding Logo" width={18} height={18} />
+                <span className="text-gray-700 dark:text-yellow-400">GokuTriedCoding</span>
+            </div>
+
+
+
         </footer>
     );
 }
