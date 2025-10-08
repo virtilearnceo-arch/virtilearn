@@ -10,6 +10,8 @@ import { GridPattern } from "@/components/magicui/grid-pattern";
 import { cn } from "@/lib/utils";
 // import { Pointer } from "@/components/ui/pointer";
 
+import { SpeedInsights } from "@vercel/speed-insights/next";
+
 const defaultUrl = process.env.NEXT_PUBLIC_APP_URL
   ? `https://${process.env.NEXT_PUBLIC_APP_URL}`
   : "http://localhost:3000";
@@ -162,6 +164,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <NavbarDemo />
+          <SpeedInsights />
           {children}
           <div className="relative flex size-full items-center justify-center overflow-hidden rounded-lg border-none bg-background py-20 md:mt-12 mt-8 ">
             <GridPattern

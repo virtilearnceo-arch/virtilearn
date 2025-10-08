@@ -15,7 +15,7 @@ import { InternshipFlow } from "@/components/Landing/Timeine";
 import TopHighlights from "@/components/Landing/TopHighlights";
 import CertificatesShowcase from "@/components/Landing/CertificatesShowcase";
 // import LinkedInMockScroll from "@/components/Landing/LinkedinInMockScroll";
-import PartnershipsShowcase from "@/components/Landing/PartnershipsShowcase";
+// import PartnershipsShowcase from "@/components/Landing/PartnershipsShowcase";
 import TerminalCareerDemo from "@/components/Landing/TerminalCareerDemo";
 import FAQSection from "@/components/Landing/FAQSection";
 import VerifyCertificateCard from "@/components/Landing/VerifyCertificateCard";
