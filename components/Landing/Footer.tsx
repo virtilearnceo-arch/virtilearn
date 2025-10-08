@@ -100,7 +100,7 @@ export default function Footer() {
                             href="mailto:support@virtilearn.in"
                             className="underline text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300"
                         >
-                            support@virtilearn.in
+                            virtilearn@gmail.com
                         </a>
                     </p>
 
