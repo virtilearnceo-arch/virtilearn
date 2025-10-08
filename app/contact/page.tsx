@@ -1,13 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import { Label } from "../../components/ui/label";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
-import FAQSection from "@/components/Landing/FAQSection";
 import { Input } from "@/components/ui/input";
 
 export default function ContactPage() {
-    const supabase = createClient();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
@@ -20,21 +17,27 @@ export default function ContactPage() {
         const email = formData.get("email") as string;
         const message = formData.get("message") as string;
 
-        const { error } = await supabase.from("contacts").insert([{ name, email, message }]);
+        try {
+            const res = await fetch("/api/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, message }),
+            });
 
-        setLoading(false);
-        if (error) {
-            console.error("Error submitting form:", error);
-            alert("Something went wrong. Please try again.");
-        } else {
+            if (!res.ok) throw new Error("Failed to submit form");
+
             setSuccess(true);
             (e.target as HTMLFormElement).reset();
+        } catch (err) {
+            console.error(err);
+            alert("Something went wrong. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <div className="w-full max-w-5xl mx-auto py-16 px-6">
-            {/* Contact Form */}
             <div className="shadow-input mx-auto w-full max-w-lg rounded-2xl bg-white p-6 dark:bg-black">
                 <h2 className="text-3xl font-bold text-neutral-800 dark:text-neutral-200">
                     📬 Get in Touch
@@ -83,27 +86,12 @@ export default function ContactPage() {
                         disabled={loading}
                     >
                         {loading ? "Sending..." : "Send Message →"}
-                        <BottomGradient />
                     </button>
                 </form>
-            </div>
-
-            {/* FAQ Section */}
-            <div className="mt-20">
-                <FAQSection />
             </div>
         </div>
     );
 }
-
-const BottomGradient = () => {
-    return (
-        <>
-            <span className="absolute inset-x-0 -bottom-px block h-px w-full bg-gradient-to-r from-transparent via-pink-400 to-transparent opacity-0 transition duration-500 group-hover/btn:opacity-100" />
-            <span className="absolute inset-x-10 -bottom-px mx-auto block h-px w-1/2 bg-gradient-to-r from-transparent via-rose-400 to-transparent opacity-0 blur-sm transition duration-500 group-hover/btn:opacity-100" />
-        </>
-    );
-};
 
 const LabelInputContainer = ({ children, className }: { children: React.ReactNode; className?: string; }) => {
     return <div className={cn("flex w-full flex-col space-y-2", className)}>{children}</div>;
