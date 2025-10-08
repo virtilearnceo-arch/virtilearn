@@ -144,10 +144,10 @@ export default function TermsPage() {
                         <p>
                             For questions about these Terms of Use, reach out to us at{" "}
                             <a
-                                href="mailto:support@virtilearn.in"
+                                href="mailto:virtilearn@gmail.com"
                                 className="text-pink-600 dark:text-pink-400 underline"
                             >
-                                support@virtilearn.in
+                                virtilearn@gmail.com
                             </a>
                             .
                         </p>

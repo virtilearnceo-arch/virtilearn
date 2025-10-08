@@ -102,7 +102,7 @@ export default function Footer() {
                     <p className="text-gray-700 dark:text-gray-300">
                         For queries & support:{" "}
                         <a
-                            href="mailto:support@virtilearn.in"
+                            href="mailto:virtilearn@gmail.com"
                             className="underline text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300"
                         >
                             virtilearn@gmail.com

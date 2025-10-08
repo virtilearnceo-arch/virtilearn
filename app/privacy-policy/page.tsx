@@ -102,7 +102,7 @@ export default function PrivacyPolicyPage() {
                             <li>Opt-out of promotional emails anytime.</li>
                             <li>
                                 Request a copy of the data we hold about you by contacting
-                                support@virtilearn.in
+                                virtilearn@gmail.com
                                 .
                             </li>
                         </ul>
@@ -148,11 +148,11 @@ export default function PrivacyPolicyPage() {
                             If you have any questions about this Privacy Policy, please reach
                             out to us at{" "}
                             <a
-                                href="mailto:support@virtilearn.in
+                                href="mailto:virtilearn@gmail.com
 "
                                 className="text-pink-600 dark:text-pink-400 underline"
                             >
-                                support@virtilearn.in
+                                virtilearn@gmail.com
                             </a>
                             .
                         </p>

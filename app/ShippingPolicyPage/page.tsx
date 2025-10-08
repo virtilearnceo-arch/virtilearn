@@ -42,7 +42,7 @@ export default function ShippingPolicyPage() {
             <h2 className="text-2xl font-bold mt-6 mb-2">5. Support</h2>
             <p className="text-neutral-700 dark:text-neutral-300 mb-4">
                 If you face any issues accessing your courses, internship resources, or certificates,
-                please contact our support team at <a href="mailto:support@virtilearn.in" className="text-purple-600 underline">support@virtilearn.in</a>.
+                please contact our support team at <a href="mailto:virtilearn@gmail.com" className="text-purple-600 underline">virtilearn@gmail.com</a>.
             </p>
 
             <p className="text-neutral-600 dark:text-neutral-400 mt-8">

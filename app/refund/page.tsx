@@ -105,10 +105,10 @@ export default function RefundPolicyPage() {
                             If you have any questions about our Refund & Cancellation Policy,
                             please contact us at{" "}
                             <a
-                                href="mailto:support@virtilearn.in"
+                                href="mailto:virtilearn@gmail.com"
                                 className="text-pink-600 dark:text-pink-400 underline"
                             >
-                                support@virtilearn.in
+                                virtilearn@gmail.com
                             </a>
                             .
                         </p>
