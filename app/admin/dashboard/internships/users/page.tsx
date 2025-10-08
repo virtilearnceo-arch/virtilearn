@@ -157,7 +157,7 @@ export default function UserInternshipsTable() {
                                             </Badge>
                                         </TableCell>
                                         <TableCell>{r.progress}%</TableCell>
-                                        <TableCell>{r.score}</TableCell>
+                                        {/* <TableCell>{r.score}</TableCell> */}
                                         <TableCell>
                                             {new Date(r.joined_at).toLocaleDateString()}
                                         </TableCell>
