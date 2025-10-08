@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -31,13 +30,12 @@ type UserInternship = {
         first_name: string;
         last_name: string;
         email: string;
-    };
+    } | null;
     internships?: {
         title: string;
         level: string | null;
-    };
+    } | null;
 };
-
 
 export default function UserInternshipsTable() {
     const [records, setRecords] = useState<UserInternship[]>([]);
@@ -49,37 +47,39 @@ export default function UserInternshipsTable() {
                 const { data, error } = await supabase
                     .from("user_internships")
                     .select(`
-    id,
-    user_id,
-    internship_id,
-    role,
-    status,
-    progress,
-    score,
-    joined_at,
-    completed_at,
-    users:user_id (
-      first_name,
-      last_name,
-      email
-    ),
-    internships:internship_id (
-      title,
-      level
-    )
-  `)
+            id,
+            user_id,
+            internship_id,
+            role,
+            status,
+            progress,
+            score,
+            joined_at,
+            completed_at,
+            users!user_internships_user_id_fkey (
+              first_name,
+              last_name,
+              email
+            ),
+            internships!user_internships_internship_id_fkey (
+              title,
+              level
+            )
+          `)
                     .order("joined_at", { ascending: false });
 
+                if (error) throw error;
 
-                // Normalize users and internships from arrays to single objects
+                // Normalize nested arrays (Supabase joins often return arrays)
                 const normalizedData: UserInternship[] = (data || []).map((r: any) => ({
                     ...r,
-                    users: r.users?.[0] || null, // take the first user object
-                    internships: r.internships?.[0] || null, // take the first internship object
+                    users: Array.isArray(r.users) ? r.users[0] : r.users || null,
+                    internships: Array.isArray(r.internships)
+                        ? r.internships[0]
+                        : r.internships || null,
                 }));
 
                 setRecords(normalizedData);
-
             } catch (err) {
                 console.error(err);
                 toast.error("Failed to load enrollments");
@@ -123,16 +123,13 @@ export default function UserInternshipsTable() {
                                 records.map((r) => (
                                     <TableRow key={r.id}>
                                         <TableCell className="font-mono text-xs">{r.id}</TableCell>
-                                        {/* <TableCell>
-                                            {r.users?.[0]?.first_name} {r.users?.[0]?.last_name}
+                                        <TableCell>
+                                            {r.users
+                                                ? `${r.users.first_name || ""} ${r.users.last_name || ""}`
+                                                : "-"}
                                         </TableCell>
-                                        <TableCell>{r.users?.[0]?.email}</TableCell>
-                                        <TableCell>{r.internships?.[0]?.title}</TableCell>
-                                        <TableCell>{r.internships?.[0]?.level || "-"}</TableCell> */}
-
-                                        <TableCell>{r.users?.first_name} {r.users?.last_name}</TableCell>
-                                        <TableCell>{r.users?.email}</TableCell>
-                                        <TableCell>{r.internships?.title}</TableCell>
+                                        <TableCell>{r.users?.email || "-"}</TableCell>
+                                        <TableCell>{r.internships?.title || "-"}</TableCell>
                                         <TableCell>{r.internships?.level || "-"}</TableCell>
 
                                         <TableCell>
