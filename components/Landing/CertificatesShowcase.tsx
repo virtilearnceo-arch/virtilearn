@@ -91,11 +91,11 @@ export default function CertificatesShowcase() {
             <div className="grid gap-12 md:gap-16 md:grid-cols-2 place-items-center">
                 <CertificateCard
                     type="Course"
-                    img="https://dhyeneqgxucokgtxiyaj.supabase.co/storage/v1/object/public/certificates/sample_course_certificate.png"
+                    img="https://mgakimsdodrycekkmbxg.supabase.co/storage/v1/object/public/certificates/Course_Sample_Certificate.png"
                 />
                 <CertificateCard
                     type="Internship"
-                    img="https://dhyeneqgxucokgtxiyaj.supabase.co/storage/v1/object/public/certificates/sample_internship_certificate.png"
+                    img="https://mgakimsdodrycekkmbxg.supabase.co/storage/v1/object/public/certificates/Internship_Sample_Certificate.png"
                 />
             </div>
         </section>

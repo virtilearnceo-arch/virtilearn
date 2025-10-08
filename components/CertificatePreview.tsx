@@ -30,7 +30,7 @@ export default function CertificatePreview() {
     return (
         <div className="relative group mt-8 rounded-2xl overflow-hidden border border-yellow-400/50 shadow-2xl bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/40 dark:to-yellow-800/30 select-none">
             <Image
-                src="https://dhyeneqgxucokgtxiyaj.supabase.co/storage/v1/object/public/certificates/sample_course_certificate.png"
+                src="https://mgakimsdodrycekkmbxg.supabase.co/storage/v1/object/public/certificates/Course_Sample_Certificate.png"
                 alt="Sample Certificate"
                 width={800}
                 height={600}

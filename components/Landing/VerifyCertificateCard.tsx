@@ -13,7 +13,7 @@ export default function VerifyCertificateCard() {
             <div className="flex-1 flex justify-center items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                    src="https://dhyeneqgxucokgtxiyaj.supabase.co/storage/v1/object/public/certificates/verification_certificate.png"
+                    src="https://mgakimsdodrycekkmbxg.supabase.co/storage/v1/object/public/certificates/Verify_Certificate.png"
                     alt="Certificate Preview"
                     width={500}
                     height={500}
