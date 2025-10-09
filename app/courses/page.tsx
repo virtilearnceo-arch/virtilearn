@@ -99,7 +99,7 @@ export default async function CoursesPage() {
 
     return (
         <div className="p-8 space-y-6">
-            <div className="text-center mb-12">
+            <div className="text-center mb-12 mt-20">
                 <h2
                     className="text-4xl font-extrabold 
                bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600 

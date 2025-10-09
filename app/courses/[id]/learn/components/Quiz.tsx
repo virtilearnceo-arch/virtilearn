@@ -122,7 +122,7 @@ export default function Quiz({ questions, courseId, onComplete }: QuizProps) {
     }, [passed]);
 
     return (
-        <div className="p-6 max-w-3xl mx-auto relative">
+        <div className="p-6 max-w-3xl mx-auto relative ">
             <h1 className="text-3xl font-extrabold mb-6 text-center dark:text-white">
                 Final Quiz 📝
             </h1>

@@ -244,7 +244,7 @@ export default function CourseCompletedPage() {
 
 
     return (
-        <div className="p-10 max-w-3xl mx-auto text-center">
+        <div className="p-10 max-w-3xl mx-auto text-center mt-16">
             {!certificate ? (
                 <>
                     <h1 className="text-3xl font-extrabold mb-6">

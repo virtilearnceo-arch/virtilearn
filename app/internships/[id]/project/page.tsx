@@ -195,7 +195,7 @@ export default function InternshipProjectPage() {
     );
 
     return (
-        <div className="flex flex-col gap-8 p-6 md:p-10">
+        <div className="flex flex-col gap-8 p-6 md:p-10 mt-16">
             {/* Project Details */}
             <Card className="shadow-2xl rounded-2xl border border-purple-200 dark:border-purple-800 bg-gradient-to-br from-white to-purple-50 dark:from-neutral-900 dark:to-neutral-950">
                 <CardHeader>

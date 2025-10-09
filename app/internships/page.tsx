@@ -73,7 +73,7 @@ export default function InternshipsPage() {
 
     return (
         <div className="p-8 space-y-6">
-            <div className="text-center mb-12">
+            <div className="text-center mb-12 mt-16">
                 <h2
                     className="text-4xl font-extrabold 
             bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 

@@ -116,7 +116,7 @@ export default function CertificatesPage() {
     };
 
     return (
-        <div className="max-w-6xl mx-auto p-10 space-y-16">
+        <div className="max-w-6xl mx-auto p-10 space-y-16 mt-16">
             {/* Course Certificates */}
             <div>
                 <h1 className="text-3xl font-bold mb-6 text-purple-700">
