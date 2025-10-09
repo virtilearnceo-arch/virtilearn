@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-sync-scripts */
 /* eslint-disable @next/next/no-page-custom-font */
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
@@ -103,6 +104,16 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
+        {/* Vime default CSS */}
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@vime/core@^5/themes/default.css"
+        />
+        {/* Vime JS */}
+        <script
+          type="module"
+          src="https://cdn.jsdelivr.net/npm/@vime/core@^5/dist/vime/vime.esm.js"
+        ></script>
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"

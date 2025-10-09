@@ -91,8 +91,10 @@ export function NavbarDemo() {
     // Navigation items
     const loggedInNavItems =
         role === "admin"
-            ? [{ name: "Dashboard", link: "/admin/dashboard" }]
+            ? [{ name: "Home", link: "/" },
+            { name: "Dashboard", link: "/admin/dashboard" }]
             : [
+                { name: "Home", link: "/" },
                 { name: "Explore Courses", link: "/courses" },
                 { name: "Explore Internships", link: "/internships" },
                 { name: "My Journey", link: "/student/my-journey" },
@@ -100,6 +102,7 @@ export function NavbarDemo() {
             ];
 
     const nonLoggedInNavItems = [
+        { name: "Home", link: "/" },
         { name: "Explore Courses", link: "/courses" },
         { name: "Explore Internships", link: "/internships" },
         { name: "Contact", link: "/contact" },
@@ -124,11 +127,13 @@ export function NavbarDemo() {
 
     return (
         <div
-            className="sticky top-0 z-50 w-full transition-colors duration-500
-    backdrop-blur-xl border-b border-white/20 dark:border-white/10
-    bg-gradient-to-r from-[#fff8f0]/70 via-[#fff0f8]/60 to-[#f0f4ff]/70
-    dark:from-[#0f0a1a]/80 dark:via-[#1a1025]/80 dark:to-[#0f0a1a]/80"
+            className="top-0 z-50 w-full transition-colors duration-500
+  md:sticky md:backdrop-blur-xl md:border-b md:border-white/20 md:dark:border-white/10
+  bg-gradient-to-r from-[#fff8f0]/100 via-[#fff0f8]/100 to-[#f0f4ff]/100
+  dark:from-[#0f0a1a]/100 dark:via-[#1a1025]/100 dark:to-[#0f0a1a]/100
+  fixed md:relative"
         >
+
 
             <Navbar className="h-16 px-4 md:px-6 lg:px-8 ">
                 <NavBody className="h-full items-center">
@@ -247,30 +252,37 @@ export function NavbarDemo() {
                     <MobileNavMenu
                         isOpen={isMobileMenuOpen}
                         onClose={() => setIsMobileMenuOpen(false)}
-                        className="bg-gradient-to-b from-[#fff8f0]/80 via-[#fff0f8]/70 to-[#f0f4ff]/80 dark:from-[#0f0a1a]/80 dark:via-[#1a1025]/80 dark:to-[#0f0a1a]/80 p-4 rounded-b-xl shadow-lg space-y-3"
+                        className="bg-gradient-to-b from-[#fff8f0]/98 via-[#fff0f8]/98 to-[#f0f4ff]/98
+    dark:from-[#0f0a1a]/98 dark:via-[#1a1025]/98 dark:to-[#0f0a1a]/98
+    p-4 rounded-b-xl shadow-lg space-y-3"
                     >
                         {/* Navigation Links */}
                         {isMounted &&
                             (user ? loggedInNavItems : nonLoggedInNavItems).map((item, idx) => (
-                                <a
-                                    key={`mobile-link-${idx}`}
-                                    href={item.link}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="block px-4 py-2 rounded-md text-[#1a1025] dark:text-[#f0f4ff] hover:bg-[#fff0f8]/60 dark:hover:bg-[#2a1a35]/70 transition"
-                                >
-                                    {item.name}
-                                </a>
+                                <div key={`mobile-link-${idx}`} className="w-full">
+                                    <a
+                                        href={item.link}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className="block w-full text-center px-4 py-2 rounded-md text-[#1a1025] dark:text-[#f0f4ff] hover:bg-[#fff0f8]/60 dark:hover:bg-[#2a1a35]/70 transition font-semibold text-base"
+                                    >
+                                        {item.name}
+                                    </a>
+                                    {/* Decorative line between items */}
+                                    {idx < (user ? loggedInNavItems.length : nonLoggedInNavItems.length) - 1 && (
+                                        <div className="mx-auto my-1 h-px w-3/4 bg-gradient-to-r from-transparent via-[#999]/80 to-transparent dark:via-[#555]/80" />
+                                    )}
+                                </div>
                             ))}
 
                         {/* Auth Buttons */}
                         {!user && (
-                            <div className="flex flex-col gap-3 mt-4">
+                            <div className="flex flex-col gap-2 mt-3">
                                 <button
                                     onClick={() => {
                                         setIsMobileMenuOpen(false);
                                         router.push("/auth/login");
                                     }}
-                                    className="w-full text-left px-4 py-2 rounded-md bg-[#ff8c42] text-white hover:bg-[#ff944e] transition"
+                                    className="w-full text-center px-4 py-2 rounded-md bg-[#ff8c42] text-white hover:bg-[#ff944e] transition font-semibold text-base"
                                 >
                                     Login
                                 </button>
@@ -279,13 +291,15 @@ export function NavbarDemo() {
                                         setIsMobileMenuOpen(false);
                                         router.push("/auth/signup");
                                     }}
-                                    className="w-full text-left px-4 py-2 rounded-md border border-[#ff8c42] text-[#ff8c42] hover:bg-[#fff4eb] dark:hover:bg-[#1a1025]/70 transition"
+                                    className="w-full text-center px-4 py-2 rounded-md border border-[#ff8c42] text-[#ff8c42] hover:bg-[#fff4eb] dark:hover:bg-[#1a1025]/80 transition font-semibold text-base"
                                 >
                                     Sign up for free
                                 </button>
                             </div>
                         )}
                     </MobileNavMenu>
+
+
                 </MobileNav>
 
 

@@ -254,7 +254,7 @@ export default function InternshipDetailsPage() {
 
     return (
         <div className="p-8 max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mt-20 lg:mt-0">
                 {/* Left column */}
                 <div className="lg:col-span-2 space-y-10">
                     <div className="lg:col-span-2 space-y-8 mb-32">
@@ -263,6 +263,15 @@ export default function InternshipDetailsPage() {
                             <BookOpen className="hidden md:block h-8 w-8 text-purple-600" />
                             {internship.title}
                         </h1>
+
+                        <div className="relative max-w-7xl max-h-96 aspect-video rounded-xl overflow-hidden shadow-lg ring-1 ring-neutral-200 dark:ring-neutral-700">
+                            <Image
+                                src={internship.thumbnail_url || "https://via.placeholder.com/800x400"}
+                                alt={internship.title}
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
 
 
                         {/* Info badges */}
@@ -441,6 +450,18 @@ export default function InternshipDetailsPage() {
 
                         {/* 👉 Price Card (Mobile only) */}
                         <div className="block lg:hidden">
+
+
+                            {/* Demo Video */}
+                            {internship.demo_url && (
+                                <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg mt-6 mb-6">
+                                    <iframe src={internship.demo_url} className="w-full h-full" allowFullScreen />
+                                    <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
+                                        🎬 Demo Video
+                                    </div>
+                                </div>
+                            )}
+
                             <Card
                                 className="relative overflow-hidden border border-neutral-200 dark:border-neutral-700 
     rounded-2xl bg-gradient-to-b from-white to-neutral-50 
@@ -579,25 +600,6 @@ export default function InternshipDetailsPage() {
                                             <span className="text-pink-600">📝</span> Letter of Recommendation (LOR)
                                         </div>
                                     </div>
-                                    Thumbnail
-                                    <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg">
-                                        <Image
-                                            src={internship.thumbnail_url || "https://via.placeholder.com/800x400"}
-                                            alt={internship.title}
-                                            fill
-                                            className="object-cover"
-                                        />
-                                    </div>
-
-                                    {/* Demo Video */}
-                                    {internship.demo_url && (
-                                        <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg mt-6">
-                                            <iframe src={internship.demo_url} className="w-full h-full" allowFullScreen />
-                                            <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
-                                                🎬 Demo Video
-                                            </div>
-                                        </div>
-                                    )}
 
 
                                 </CardContent>
@@ -851,7 +853,20 @@ export default function InternshipDetailsPage() {
                 <div className="space-y-6 lg:sticky lg:top-8 self-start h-fit">
 
 
+
                     <div className="hidden lg:block">
+
+
+                        {/* Demo Video */}
+                        {internship.demo_url && (
+                            <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg mt-6 mb-6">
+                                <iframe src={internship.demo_url} className="w-full h-full" allowFullScreen />
+                                <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
+                                    🎬 Demo Video
+                                </div>
+                            </div>
+                        )}
+
                         <Card
                             className="relative overflow-hidden border border-neutral-200 dark:border-neutral-700 
     rounded-2xl bg-gradient-to-b from-white to-neutral-50 
@@ -989,25 +1004,8 @@ export default function InternshipDetailsPage() {
                                         <span className="text-pink-600">📝</span> Letter of Recommendation (LOR)
                                     </div>
                                 </div>
-                                Thumbnail
-                                <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg">
-                                    <Image
-                                        src={internship.thumbnail_url || "https://via.placeholder.com/800x400"}
-                                        alt={internship.title}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                </div>
 
-                                {/* Demo Video */}
-                                {internship.demo_url && (
-                                    <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg mt-6">
-                                        <iframe src={internship.demo_url} className="w-full h-full" allowFullScreen />
-                                        <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
-                                            🎬 Demo Video
-                                        </div>
-                                    </div>
-                                )}
+
 
 
                             </CardContent>

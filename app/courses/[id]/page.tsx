@@ -305,13 +305,27 @@ export default function CourseDetailsPage() {
 
     return (
         <div className="p-8 max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mt-20 lg:mt-0">
                 {/* Left column */}
                 <div className="lg:col-span-2 space-y-10 ">
                     <h1 className="text-4xl font-bold tracking-tight flex items-center gap-3">
                         {/* <BookOpen className="hidden md:block h-8 w-8 text-purple-600" /> */}
                         {course.name}
                     </h1>
+
+
+                    {/* Course Thumbnail */}
+                    <div className="relative max-w-7xl max-h-96 aspect-video rounded-xl overflow-hidden shadow-lg ring-1 ring-neutral-200 dark:ring-neutral-700">
+                        <Image
+                            src={course.thumbnail_url || "https://via.placeholder.com/800x400?text=No+Image"}
+                            alt={course.name}
+                            fill
+                            className="object-cover transition-transform duration-500 hover:scale-105"
+                        />
+                        {/* Overlay gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+                    </div>
+
 
                     {/* 🌟 Course Info */}
                     <div className="mt-4 space-y-3 text-sm">
@@ -434,6 +448,22 @@ export default function CourseDetailsPage() {
 
                     {/* 👉 Price Card (Mobile only) */}
                     <div className="block lg:hidden">
+
+                        {/* 🎥 Demo Video */}
+                        {course.demo_url && (
+                            <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg ring-1 ring-neutral-200 dark:ring-neutral-700 mt-6">
+                                <iframe
+                                    src={course.demo_url}
+                                    className="w-full h-full"
+                                    allowFullScreen
+                                />
+                                {/* Play indicator overlay */}
+                                <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
+                                    🎬 Demo Video
+                                </div>
+                            </div>
+                        )}
+
                         <Card
                             className="relative overflow-hidden border border-neutral-200 dark:border-neutral-700 
                rounded-2xl bg-gradient-to-b from-white to-neutral-50 
@@ -785,6 +815,21 @@ export default function CourseDetailsPage() {
 
                     <div className="hidden lg:block">
 
+                        {/* 🎥 Demo Video */}
+                        {course.demo_url && (
+                            <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg ring-1 ring-neutral-200 dark:ring-neutral-700 mt-6 mb-4">
+                                <iframe
+                                    src={course.demo_url}
+                                    className="w-full h-full"
+                                    allowFullScreen
+                                />
+                                {/* Play indicator overlay */}
+                                <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
+                                    🎬 Demo Video
+                                </div>
+                            </div>
+                        )}
+
                         <Card
                             className="relative overflow-hidden border border-neutral-200 dark:border-neutral-700 
                rounded-2xl bg-gradient-to-b from-white to-neutral-50 
@@ -925,36 +970,6 @@ export default function CourseDetailsPage() {
 
                     </div>
 
-                    {/* 📸 Thumbnail */}
-                    <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg ring-1 ring-neutral-200 dark:ring-neutral-700">
-                        <Image
-                            src={
-                                course.thumbnail_url ||
-                                "https://via.placeholder.com/800x400?text=No+Image"
-                            }
-                            alt={course.name}
-                            fill
-                            className="object-cover transition-transform duration-500 hover:scale-105"
-                        />
-
-                        {/* Overlay gradient for subtle shine */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
-                    </div>
-
-                    {/* 🎥 Demo Video */}
-                    {course.demo_url && (
-                        <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg ring-1 ring-neutral-200 dark:ring-neutral-700 mt-6">
-                            <iframe
-                                src={course.demo_url}
-                                className="w-full h-full"
-                                allowFullScreen
-                            />
-                            {/* Play indicator overlay */}
-                            <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
-                                🎬 Demo Video
-                            </div>
-                        </div>
-                    )}
 
                 </div>
             </div>

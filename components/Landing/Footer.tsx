@@ -39,15 +39,15 @@ export default function Footer() {
                 <div className="flex flex-col gap-6">
                     <div className="flex items-center gap-3">
                         <Image
-                            src="/images/Favicon.png"
+                            src="/images/VirtiLearnLogo.png"
                             alt="VirtiLearn Logo"
-                            width={60}
-                            height={60}
+                            width={100}
+                            height={100}
                             className="object-contain"
                         />
-                        <h2 className="text-xl md:text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500">
+                        {/* <h2 className="text-xl md:text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500">
                             VirtiLearn
-                        </h2>
+                        </h2> */}
                     </div>
                     <p className="text-gray-700 dark:text-gray-300">
                         Join a supportive community of passionate coders, where learning, collaboration, and innovation come together. Embark on your coding journey with us.
@@ -145,11 +145,7 @@ export default function Footer() {
 
             </div>
 
-            <div className="absolute bottom-4 right-4 text-[10px] flex items-center gap-1 font-medium transition-all cursor-pointer">
-                <span className="text-gray-500 dark:text-gray-300">Built with ❤️ by</span>
-                <Image src="/images/gokutriedcoding.png" alt="GokuTriedCoding Logo" width={18} height={18} />
-                <span className="text-gray-700 dark:text-yellow-400">GokuTriedCoding</span>
-            </div>
+
 
 
 
