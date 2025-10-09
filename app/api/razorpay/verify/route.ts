@@ -61,9 +61,9 @@ export async function POST(req: Request) {
   if (user?.email && course) {
     try {
      await resend.emails.send({
-  from: "VirtiLearn <no-reply@virtilearn.in>",
+  from: "VirtiLearn Team <team@virtilearn.in>",
   to: user.email,
-  subject: `🎉 Enrollment Confirmed: ${course.name}`,
+  subject: `Enrollment Confirmed: ${course.name}`,
   react: EmailTemplate({
     type: "course",               // ✅ new prop
     firstName: user.first_name || "",

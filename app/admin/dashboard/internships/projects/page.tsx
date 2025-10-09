@@ -66,7 +66,7 @@ export default function InternshipList() {
                             <TableCell className="font-medium">{internship.title}</TableCell>
                             <TableCell>{(internship.categories || []).join(", ")}</TableCell>
                             <TableCell className="capitalize">{internship.level || "-"}</TableCell>
-                            <TableCell>${internship.price}</TableCell>
+                            <TableCell>₹{internship.price}</TableCell>
                             <TableCell>
                                 <Button size="sm" variant="default" onClick={() => goToProjects(internship.id)}>
                                     Manage

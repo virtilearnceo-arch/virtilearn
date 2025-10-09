@@ -1,5 +1,6 @@
 "use client";
 
+import { Highlighter } from "@/components/magicui/highlighter";
 import {
   Card,
   CardContent,
@@ -33,8 +34,10 @@ export default function SignUpSuccessPage() {
               <br />
               📬 Please check your inbox and click the confirmation link to activate your account.
             </p>
-            <p className="text-gray-600 dark:text-gray-400 mt-4 italic">
-              Tip: If you don&apos;t see it, check your spam or promotions folder.
+            <p className="text-red-600 dark:text-red-400 mt-4 italic">
+              Tip: If you don&apos;t see it, check your          <Highlighter action="highlight" color="#87CEFA">
+                spam
+              </Highlighter>{" "} or promotions folder.
             </p>
           </CardContent>
           {/* Decorative bottom accent */}

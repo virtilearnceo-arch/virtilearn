@@ -53,42 +53,46 @@ export default function UserPayments() {
             } = await supabase.auth.getUser();
             if (!user) return;
 
-            // --- Fetch course purchases with course name ---
+            // ✅ Fetch course purchases — FIXED relation syntax
             const { data: courses, error: courseError } = await supabase
                 .from("purchases")
                 .select(`
                     id, amount, currency, status, razorpay_order_id, razorpay_payment_id, created_at,
                     courses:course_id ( name ),
-                    coupons ( code, discount_percent )
+                    coupons:coupon_id ( code, discount_percent )
                 `)
                 .eq("user_id", user.id)
                 .order("created_at", { ascending: false });
 
-            if (!courseError && courses) {
+            if (courseError) console.error("Course payments error:", courseError);
+
+            if (courses) {
                 const normalizedCourses = courses.map((c: any) => ({
                     ...c,
                     courses: c.courses ?? null,
-                    coupons: c.coupons?.[0] ?? null,
+                    coupons: c.coupons ?? null,
                 }));
                 setCoursePayments(normalizedCourses);
             }
 
-            // --- Fetch internship purchases with internship title ---
+            // ✅ Fetch internship purchases — FIXED relation syntax
             const { data: internships, error: internshipError } = await supabase
                 .from("internship_purchases")
                 .select(`
                     id, amount, currency, status, razorpay_order_id, razorpay_payment_id, created_at,
                     internships:internship_id ( title ),
-                    coupons ( code, discount_percent )
+                    coupons:coupon_id ( code, discount_percent )
                 `)
                 .eq("user_id", user.id)
                 .order("created_at", { ascending: false });
 
-            if (!internshipError && internships) {
+            if (internshipError) console.error("Internship payments error:", internshipError);
+
+            if (internships) {
                 const normalizedInternships = internships.map((i: any) => ({
                     ...i,
                     internships: i.internships ?? null,
-                    coupons: i.coupons?.[0] ?? null,
+                    coupons: i.coupons ?? null,
                 }));
                 setInternshipPayments(normalizedInternships);
             }
@@ -111,7 +115,9 @@ export default function UserPayments() {
                 <p>No payments found.</p>
             ) : (
                 <Table>
-                    <TableCaption>History of your {isCourse ? "course" : "internship"} purchases.</TableCaption>
+                    <TableCaption>
+                        History of your {isCourse ? "course" : "internship"} purchases.
+                    </TableCaption>
                     <TableHeader>
                         <TableRow>
                             <TableHead>{isCourse ? "Course" : "Internship"}</TableHead>
