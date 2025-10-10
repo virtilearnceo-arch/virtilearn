@@ -10,7 +10,6 @@ import Footer from "@/components/Landing/Footer";
 import { GridPattern } from "@/components/magicui/grid-pattern";
 import { cn } from "@/lib/utils";
 // import { Pointer } from "@/components/ui/pointer";
-import { SessionEnforcer } from "@/components/SessionEnforcer";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -177,7 +176,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <NavbarDemo />
-          <SessionEnforcer />
 
           <SpeedInsights />
           {children}
