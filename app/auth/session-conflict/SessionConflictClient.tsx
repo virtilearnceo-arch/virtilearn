@@ -1,4 +1,3 @@
-// app/auth/session-conflict/SessionConflictClient.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -11,8 +10,8 @@ export default function SessionConflictClient() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const userId = searchParams.get("userId");
-    const sessionId = searchParams.get("sessionId");
+    const userId = searchParams?.get("userId");
+    const sessionId = searchParams?.get("sessionId");
 
     const [handled, setHandled] = useState(false);
 
@@ -25,7 +24,6 @@ export default function SessionConflictClient() {
         if (handled) return;
 
         const handleConflict = async () => {
-            // Fetch current session and role from Supabase
             const { data: existingUser } = await supabase
                 .from("users")
                 .select("current_session_id, role")
@@ -37,31 +35,28 @@ export default function SessionConflictClient() {
                 return;
             }
 
-            // ✅ If session matches, redirect immediately
+            // ✅ Direct redirect if session matches
             if (existingUser.current_session_id === sessionId) {
                 if (existingUser.role === "admin") router.replace("/admin/dashboard");
                 else router.replace("/courses");
                 return;
             }
 
-            // Otherwise, show Sonner toast for conflict
+            // Show toast for conflict
             toast(
                 "You are already logged in on another device. Click 'Continue' to log out from there and continue here.",
                 {
-                    duration: 20000, // 20 seconds
+                    duration: 20000,
                     action: {
                         label: "Continue",
                         onClick: async () => {
-                            // Update session ID in Supabase
                             await supabase
                                 .from("users")
                                 .update({ current_session_id: sessionId })
                                 .eq("id", userId);
 
-                            // Save session locally
                             localStorage.setItem("session_id", sessionId);
 
-                            // Redirect based on role
                             if (existingUser.role === "admin") router.replace("/admin/dashboard");
                             else router.replace("/courses");
                         },
