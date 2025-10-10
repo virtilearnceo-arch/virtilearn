@@ -213,11 +213,14 @@ export function LoginForm() {
             {isLoading ? "Loading..." : "Login"}
           </Button>
 
-          <div className="relative text-center text-sm text-gray-500 my-2 before:content-[''] before:block before:h-px before:bg-gray-300 before:absolute before:left-0 before:right-0 before:top-1/2 after:content-[''] after:block after:h-px after:bg-gray-300 after:absolute after:left-0 after:right-0 after:top-1/2">
-            <span className="relative px-2 bg-white dark:bg-neutral-900 text-gray-500">
+          <div className="relative flex items-center justify-center my-4">
+            <div className="flex-grow border-t border-gray-300 dark:border-gray-700"></div>
+            <span className="mx-3 text-sm text-gray-500 bg-white dark:bg-neutral-900 px-2">
               Or continue with
             </span>
+            <div className="flex-grow border-t border-gray-300 dark:border-gray-700"></div>
           </div>
+
 
           <Button
             variant="outline"
