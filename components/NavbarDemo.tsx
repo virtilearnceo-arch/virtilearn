@@ -135,8 +135,9 @@ export function NavbarDemo() {
         >
 
 
-            <Navbar className="h-16 px-4 md:px-6 lg:px-8 ">
-                <NavBody className="h-full flex items-center relative">
+            <Navbar className="h-16 px-4 md:px-6 lg:px-8">
+                {/* Desktop Navbar */}
+                <NavBody className="hidden md:flex h-full items-center relative">
                     <NavbarLogo />
 
                     {/* Nav Items */}
@@ -174,21 +175,16 @@ export function NavbarDemo() {
                             </Avatar>
                         ) : (
                             <div className="flex items-center gap-3">
-                                {/* Login Button */}
                                 <button
                                     onClick={() => router.push("/auth/login")}
-                                    className="px-2 py-1.5 rounded-lg bg-gradient-to-r from-[#ff9a4a] to-[#ff6f61] text-white font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all z-10"
+                                    className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#ff9a4a] to-[#ff6f61] text-white font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] transition-all"
                                 >
                                     Login
                                 </button>
-
-                                {/* Divider */}
                                 <div className="w-px h-6 bg-gradient-to-b from-transparent via-[#ff6f61]/60 to-transparent" />
-
-                                {/* Signup Button */}
                                 <button
                                     onClick={() => router.push("/auth/sign-up")}
-                                    className="px-2 py-1.5 rounded-lg border border-[#ff9a4a]/80 text-[#ff6f61] bg-white/70 dark:bg-[#1a1025]/40 font-semibold text-sm hover:bg-[#fff3ec] dark:hover:bg-[#2a1a35]/70 transition-all shadow-sm hover:shadow-md z-10"
+                                    className="px-3 py-1.5 rounded-lg border border-[#ff9a4a]/80 text-[#ff6f61] bg-white/70 dark:bg-[#1a1025]/40 font-semibold text-sm hover:bg-[#fff3ec] dark:hover:bg-[#2a1a35]/70 transition-all shadow-sm hover:shadow-md"
                                 >
                                     Sign up for free
                                 </button>
@@ -197,32 +193,20 @@ export function NavbarDemo() {
                     </div>
                 </NavBody>
 
-
-
-                {/* Mobile Nav */}
-                <MobileNav>
-                    <MobileNavHeader className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[#fff8f0]/80 via-[#fff0f8]/70 to-[#f0f4ff]/80 dark:from-[#0f0a1a]/80 dark:via-[#1a1025]/80 dark:to-[#0f0a1a]/80  rounded-b-xl">
-
+                {/* Mobile Navbar */}
+                <MobileNav className="md:hidden">
+                    <MobileNavHeader className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[#fff8f0]/80 via-[#fff0f8]/70 to-[#f0f4ff]/80 dark:from-[#0f0a1a]/80 dark:via-[#1a1025]/80 dark:to-[#0f0a1a]/80 rounded-b-xl">
                         <NavbarLogo />
 
                         <div className="flex items-center gap-3">
-                            {/* User Avatar
-                            <Avatar
-                                className="cursor-pointer w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600 hover:scale-105 transition-transform"
-                                onClick={() => router.push("/account")}
-                            >
-                                <AvatarImage src={avatarUrl} alt={fullName ?? "User"} />
-                            </Avatar> */}
-
-                            {user ? (
+                            {user && (
                                 <Avatar
                                     className="cursor-pointer w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600"
                                     onClick={() => router.push("/account")}
                                 >
                                     <AvatarImage src={avatarUrl} alt={fullName ?? "User"} />
                                 </Avatar>
-                            )
-                                : <></>}
+                            )}
 
                             {/* Theme Toggle */}
                             <DropdownMenu>
@@ -249,15 +233,12 @@ export function NavbarDemo() {
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             />
                         </div>
-
                     </MobileNavHeader>
 
                     <MobileNavMenu
                         isOpen={isMobileMenuOpen}
                         onClose={() => setIsMobileMenuOpen(false)}
-                        className="bg-gradient-to-b from-[#fff8f0]/98 via-[#fff0f8]/98 to-[#f0f4ff]/98
-    dark:from-[#0f0a1a]/98 dark:via-[#1a1025]/98 dark:to-[#0f0a1a]/98
-    p-4 rounded-b-xl shadow-lg space-y-3"
+                        className="bg-gradient-to-b from-[#fff8f0]/98 via-[#fff0f8]/98 to-[#f0f4ff]/98 dark:from-[#0f0a1a]/98 dark:via-[#1a1025]/98 dark:to-[#0f0a1a]/98 p-4 rounded-b-xl shadow-lg space-y-3"
                     >
                         {/* Navigation Links */}
                         {isMounted &&
@@ -270,7 +251,6 @@ export function NavbarDemo() {
                                     >
                                         {item.name}
                                     </a>
-                                    {/* Decorative line between items */}
                                     {idx < (user ? loggedInNavItems.length : nonLoggedInNavItems.length) - 1 && (
                                         <div className="mx-auto my-1 h-px w-3/4 bg-gradient-to-r from-transparent via-[#999]/80 to-transparent dark:via-[#555]/80" />
                                     )}
@@ -279,11 +259,9 @@ export function NavbarDemo() {
 
                         {/* Auth Buttons */}
                         {!user && (
-                            <div className="flex flex-col items-center justify-center gap-3 mt-6 text-center w-full">
-                                {/* Top separator */}
+                            <div className="flex flex-col items-center justify-center gap-3 mt-6 w-full text-center">
                                 <div className="w-3/4 h-px bg-gradient-to-r from-transparent via-[#ffb67f]/70 to-transparent dark:via-[#ff8c42]/40 mb-2" />
 
-                                {/* Login Button */}
                                 <button
                                     onClick={() => {
                                         setIsMobileMenuOpen(false);
@@ -294,7 +272,6 @@ export function NavbarDemo() {
                                     Login
                                 </button>
 
-                                {/* Signup Button */}
                                 <button
                                     onClick={() => {
                                         setIsMobileMenuOpen(false);
@@ -305,18 +282,13 @@ export function NavbarDemo() {
                                     Sign up for free
                                 </button>
 
-                                {/* Bottom separator */}
                                 <div className="w-2/3 h-px mt-4 bg-gradient-to-r from-transparent via-[#ccc]/50 to-transparent dark:via-[#444]/50" />
                             </div>
                         )}
-
                     </MobileNavMenu>
-
-
                 </MobileNav>
-
-
             </Navbar>
+
         </div>
     );
 }
