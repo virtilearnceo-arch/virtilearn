@@ -3,30 +3,70 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: Request) {
   try {
-    const { userId, otp } = await req.json();
-    if (!userId || !otp) return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
+    const body = await req.json();
+    console.log("Received request body:", body);
+
+    const { userId, otp } = body;
+
+    if (!userId || !otp) {
+      console.log("Missing userId or OTP");
+      return NextResponse.json(
+        { error: "Missing parameters" },
+        { status: 400 }
+      );
+    }
 
     const supabase = await createClient();
 
-    const { data } = await supabase
+    // Fetch OTP record from database
+    const { data: otpRecord, error } = await supabase
       .from("otp_codes")
       .select("*")
       .eq("user_id", userId)
+      .eq("otp", otp)
       .maybeSingle();
 
-    if (!data) return NextResponse.json({ error: "OTP not found" }, { status: 400 });
-
-    const now = new Date();
-    if (data.otp !== otp || new Date(data.expires_at) < now) {
-      return NextResponse.json({ error: "Invalid or expired OTP" }, { status: 400 });
+    if (error) {
+      console.error("Database error:", error);
+      return NextResponse.json(
+        { error: "Database error while verifying OTP" },
+        { status: 500 }
+      );
     }
 
-    // Delete used OTP
-    await supabase.from("otp_codes").delete().eq("user_id", userId);
+    if (!otpRecord) {
+      console.log("No matching OTP found");
+      return NextResponse.json(
+        { error: "Invalid or expired OTP" },
+        { status: 400 }
+      );
+    }
+
+    // Check if OTP is expired
+    const now = new Date();
+    if (new Date(otpRecord.expires_at) < now) {
+      console.log("OTP expired:", otpRecord.expires_at, "current time:", now);
+      return NextResponse.json(
+        { error: "OTP has expired" },
+        { status: 400 }
+      );
+    }
+
+    // Optional: Delete OTP after successful verification
+    await supabase
+      .from("otp_codes")
+      .delete()
+      .eq("user_id", userId)
+      .eq("otp", otp);
+
+    console.log("OTP verified successfully for userId:", userId);
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "OTP verification failed" }, { status: 500 });
+    console.error("Server error:", err);
+    return NextResponse.json(
+      { error: "Failed to verify OTP" },
+      { status: 500 }
+    );
   }
 }

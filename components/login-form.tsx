@@ -56,51 +56,35 @@ export function LoginForm() {
     else router.push("/courses");
   };
 
-  // Email/password login
+  // handleLogin
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
     try {
-      const { data: signInData, error: signInError } =
-        await supabase.auth.signInWithPassword({ email, password });
+      // 1️⃣ Check if email exists in your users table
+      const { data: userData } = await supabase
+        .from("users")
+        .select("id")
+        .eq("email", email)
+        .maybeSingle();
 
-      if (signInError || !signInData.user?.id) {
-        setError(signInError?.message || "User not found");
-        setIsLoading(false);
+      if (!userData?.id) {
+        setError("Invalid credentials");
         return;
       }
 
-      setUserId(signInData.user.id);
+      setUserId(userData.id);
 
-      // Ensure user exists in users table
-      const { data: existingUser } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", signInData.user.id)
-        .maybeSingle();
-
-      if (!existingUser) {
-        await supabase.from("users").insert({
-          id: signInData.user.id,
-          email: signInData.user.email,
-          role: "student",
-          first_name: signInData.user.user_metadata?.full_name?.split(" ")[0] || "",
-          last_name: signInData.user.user_metadata?.full_name?.split(" ")[1] || "",
-          profile_picture: signInData.user.user_metadata?.avatar_url || "",
-        });
-      }
-
-      // Send OTP to email
+      // 2️⃣ Send OTP
       const res = await fetch("/api/send-otp", {
         method: "POST",
-        body: JSON.stringify({ email, userId: signInData.user.id }),
+        body: JSON.stringify({ email, userId: userData.id }),
       }).then((r) => r.json());
 
       if (res.error) {
         setError(res.error);
-        setIsLoading(false);
         return;
       }
 
@@ -112,33 +96,58 @@ export function LoginForm() {
       setIsLoading(false);
     }
   };
-
-  // OTP verification
   const handleVerifyOtp = async () => {
+    if (otp.length !== 6) {
+      toast.error("Enter a valid 6-digit OTP");
+      return; // keep dialog open
+    }
+
     setIsLoading(true);
+
     try {
       const res = await fetch("/api/verify-otp", {
         method: "POST",
-        body: JSON.stringify({ userId, otp }),
+        body: JSON.stringify({ userId, otp, email, password }),
       }).then((r) => r.json());
 
       if (res.error) {
-        toast.error(res.error);
-        setIsLoading(false);
-        return;
+        // ❌ OTP verification failed
+        toast.error(res.error || "Incorrect OTP. Please try again.");
+        return; // keep dialog open
       }
 
-      await redirectUserByRole(userId);
+      // ✅ Now try signing in the user with email & password
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error || !data.user?.id) {
+        // ❌ Password or login failed
+        toast.error(error?.message || "Login failed after OTP. Try again.");
+        return; // keep dialog open
+      }
+
+      // ✅ Success: redirect user
+      await redirectUserByRole(data.user.id);
+
+      // ✅ Only close OTP dialog on full success
       setOtpDialogOpen(false);
     } catch (err) {
       console.error(err);
-      toast.error("OTP verification failed");
+      toast.error("An error occurred. Please try again.");
+      // ❌ Keep dialog open
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Google login
+
+
+
+
+
+  // Google login (direct)
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
@@ -151,6 +160,7 @@ export function LoginForm() {
 
   return (
     <>
+      {/* Login Form */}
       <form
         onSubmit={handleLogin}
         className="flex flex-col gap-6 p-8 rounded-3xl bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 shadow-2xl dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900"
@@ -233,20 +243,13 @@ export function LoginForm() {
         </p>
       </form>
 
+      {/* OTP Dialog */}
       <AlertDialog open={otpDialogOpen} onOpenChange={setOtpDialogOpen}>
         <AlertDialogTrigger asChild>
-          {/* Hidden trigger (opened programmatically) */}
           <span />
         </AlertDialogTrigger>
 
-        <AlertDialogContent
-          className="w-[95%] max-w-sm sm:max-w-md mx-auto rounded-2xl p-6 sm:p-8 
-      bg-gradient-to-b from-white to-neutral-50 dark:from-neutral-900 dark:to-neutral-800 
-      border border-neutral-200 dark:border-neutral-700 
-      shadow-2xl backdrop-blur-lg animate-in fade-in-0 zoom-in-95 
-      flex flex-col items-center justify-center text-center"
-        >
-          {/* Header */}
+        <AlertDialogContent className="w-[95%] max-w-sm sm:max-w-md mx-auto rounded-2xl p-6 sm:p-8 bg-gradient-to-b from-white to-neutral-50 dark:from-neutral-900 dark:to-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-2xl backdrop-blur-lg animate-in fade-in-0 zoom-in-95 flex flex-col items-center justify-center text-center">
           <AlertDialogHeader className="flex flex-col items-center justify-center text-center space-y-3">
             <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-500 flex items-center justify-center rounded-full shadow-sm">
               🔒
@@ -255,20 +258,18 @@ export function LoginForm() {
               Verify Your OTP
             </AlertDialogTitle>
             <AlertDialogDescription className="text-gray-600 dark:text-gray-400 text-sm max-w-xs">
-              Please enter the 6-digit code sent to your email to continue.
+              Enter the 6-digit code sent to your email.
             </AlertDialogDescription>
           </AlertDialogHeader>
 
-          {/* OTP Input */}
           <div className="flex justify-center mt-6 mb-6 w-full">
             <div className="flex flex-col items-center space-y-4 w-full">
-              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 tracking-wide">
-                Enter your verification code
-              </p>
-
               <InputOTP
                 maxLength={6}
-                onComplete={(val: string) => setOtp(val)}
+                onComplete={(val: string) => {
+                  console.log("OTP typed by user:", val); // <-- log OTP input
+                  setOtp(val);
+                }}
                 className="flex justify-center gap-3 sm:gap-4"
               >
                 <InputOTPGroup className="flex gap-3 sm:gap-4">
@@ -276,12 +277,7 @@ export function LoginForm() {
                     <InputOTPSlot
                       key={i}
                       index={i}
-                      className="w-10 h-12 sm:w-12 sm:h-14 rounded-xl border-2 border-gray-300 dark:border-neutral-700 
-                  bg-white dark:bg-neutral-900 text-xl sm:text-2xl font-semibold 
-                  text-gray-900 dark:text-white 
-                  focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 
-                  transition-all duration-200 ease-in-out shadow-sm hover:border-yellow-300 
-                  dark:hover:border-yellow-500"
+                      className="w-10 h-12 sm:w-12 sm:h-14 rounded-xl border-2 border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition-all duration-200 ease-in-out shadow-sm hover:border-yellow-300 dark:hover:border-yellow-500"
                     />
                   ))}
                 </InputOTPGroup>
@@ -293,12 +289,7 @@ export function LoginForm() {
                     <InputOTPSlot
                       key={i}
                       index={i}
-                      className="w-10 h-12 sm:w-12 sm:h-14 rounded-xl border-2 border-gray-300 dark:border-neutral-700 
-                  bg-white dark:bg-neutral-900 text-xl sm:text-2xl font-semibold 
-                  text-gray-900 dark:text-white 
-                  focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 
-                  transition-all duration-200 ease-in-out shadow-sm hover:border-yellow-300 
-                  dark:hover:border-yellow-500"
+                      className="w-10 h-12 sm:w-12 sm:h-14 rounded-xl border-2 border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30 transition-all duration-200 ease-in-out shadow-sm hover:border-yellow-300 dark:hover:border-yellow-500"
                     />
                   ))}
                 </InputOTPGroup>
@@ -306,29 +297,27 @@ export function LoginForm() {
             </div>
           </div>
 
-          {/* Footer */}
           <AlertDialogFooter className="flex flex-col gap-3 w-full">
-            <AlertDialogAction
-              onClick={handleVerifyOtp}
-              className="w-full py-3 text-base sm:text-lg font-semibold bg-gradient-to-r 
-          from-yellow-400 via-orange-500 to-pink-500 hover:opacity-90 
-          text-white rounded-xl shadow-md transition-all"
+            <button
+              type="button"
+              onClick={() => {
+                console.log("OTP sent for verification:", otp);
+                handleVerifyOtp();
+              }}
+              className="w-full py-3 text-base sm:text-lg font-semibold bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 hover:opacity-90 text-white rounded-xl shadow-md transition-all"
             >
               {isLoading ? "Verifying..." : "Verify OTP"}
-            </AlertDialogAction>
+            </button>
 
             <AlertDialogCancel
               onClick={() => setOtpDialogOpen(false)}
-              className="w-full py-2 text-sm rounded-xl border border-gray-300 dark:border-gray-600 
-          hover:bg-gray-100 dark:hover:bg-neutral-800 transition-all text-gray-700 dark:text-gray-300"
+              className="w-full py-2 text-sm rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-neutral-800 transition-all text-gray-700 dark:text-gray-300"
             >
               Cancel
             </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-
 
     </>
   );
