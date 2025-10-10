@@ -96,12 +96,13 @@ export function LoginForm() {
     const newSessionId = uuidv4();
     const localSessionId = localStorage.getItem("session_id");
 
-    // Step 4: Handle case where user is logged in elsewhere
+    // Step 4: Handle session conflicts
     if (existingUser?.current_session_id && existingUser.current_session_id !== localSessionId) {
-      // ✅ Sonner toast confirmation
+      // Session is on a different device
       toast(
         "You are already logged in on another device. Click 'Continue' to log out from there and continue here.",
         {
+          duration: 20000, // 20 seconds
           action: {
             label: "Continue",
             onClick: async () => {
@@ -122,7 +123,7 @@ export function LoginForm() {
       setIsLoading(false);
       return;
     } else {
-      // ✅ Normal login (no active session elsewhere)
+      // ✅ No conflict or same device login
       await supabase
         .from("users")
         .update({ current_session_id: newSessionId })
@@ -130,7 +131,6 @@ export function LoginForm() {
 
       localStorage.setItem("session_id", newSessionId);
     }
-
     // Step 5: Redirect based on role
     await redirectUserByRole(user.id);
     setIsLoading(false);
