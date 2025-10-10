@@ -136,21 +136,18 @@ export function NavbarDemo() {
 
 
             <Navbar className="h-16 px-4 md:px-6 lg:px-8 ">
-                <NavBody className="h-full items-center">
+                <NavBody className="h-full flex items-center relative">
                     <NavbarLogo />
 
                     {/* Nav Items */}
                     {isMounted && (
                         <NavItems
                             items={user ? loggedInNavItems : nonLoggedInNavItems}
+                            className="flex-1"
                         />
                     )}
 
-
-                    <div className="flex items-center gap-4 ml-auto h-full">
-
-
-
+                    <div className="flex items-center gap-3 h-full z-10">
                         {/* Theme Toggle */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -168,7 +165,6 @@ export function NavbarDemo() {
                         </DropdownMenu>
 
                         {/* Auth Buttons */}
-                        {/* Logged-in User Avatar */}
                         {user ? (
                             <Avatar
                                 className="cursor-pointer w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600"
@@ -177,29 +173,31 @@ export function NavbarDemo() {
                                 <AvatarImage src={avatarUrl} alt={fullName ?? "User"} />
                             </Avatar>
                         ) : (
-                            <>
-                                {/* Login Button - gradient like mobile */}
+                            <div className="flex items-center gap-3">
+                                {/* Login Button */}
                                 <button
                                     onClick={() => router.push("/auth/login")}
-                                    className="px-3 py-2 rounded-lg bg-gradient-to-r from-[#ff9a4a] to-[#ff6f61] text-white font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
+                                    className="px-2 py-1.5 rounded-lg bg-gradient-to-r from-[#ff9a4a] to-[#ff6f61] text-white font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all z-10"
                                 >
                                     Login
                                 </button>
 
-                                {/* Signup Button - bordered / lighter like mobile */}
+                                {/* Divider */}
+                                <div className="w-px h-6 bg-gradient-to-b from-transparent via-[#ff6f61]/60 to-transparent" />
+
+                                {/* Signup Button */}
                                 <button
                                     onClick={() => router.push("/auth/sign-up")}
-                                    className="px-3 py-2 rounded-lg border border-[#ff9a4a]/80 text-[#ff6f61] bg-white/70 dark:bg-[#1a1025]/40 font-semibold text-sm hover:bg-[#fff3ec] dark:hover:bg-[#2a1a35]/70 transition-all shadow-sm hover:shadow-md"
+                                    className="px-2 py-1.5 rounded-lg border border-[#ff9a4a]/80 text-[#ff6f61] bg-white/70 dark:bg-[#1a1025]/40 font-semibold text-sm hover:bg-[#fff3ec] dark:hover:bg-[#2a1a35]/70 transition-all shadow-sm hover:shadow-md z-10"
                                 >
                                     Sign up for free
                                 </button>
-                            </>
-
-
+                            </div>
                         )}
                     </div>
-
                 </NavBody>
+
+
 
                 {/* Mobile Nav */}
                 <MobileNav>
