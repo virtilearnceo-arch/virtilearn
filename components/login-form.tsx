@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { v4 as uuidv4 } from "uuid";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const supabase = createClient();
@@ -42,7 +43,7 @@ export function LoginForm() {
     else router.push("/courses");
   };
 
-  // ✅ login handler with single-session enforcement
+  // ✅ login handler with single-session enforcement using Sonner
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -96,28 +97,30 @@ export function LoginForm() {
     const localSessionId = localStorage.getItem("session_id");
 
     // Step 4: Handle case where user is logged in elsewhere
-    if (
-      existingUser?.current_session_id &&
-      existingUser.current_session_id !== localSessionId
-    ) {
-      const confirmSwitch = window.confirm(
-        "You are already logged in on another device. Do you want to log out from there and continue here?"
+    if (existingUser?.current_session_id && existingUser.current_session_id !== localSessionId) {
+      // ✅ Sonner toast confirmation
+      toast(
+        "You are already logged in on another device. Click 'Continue' to log out from there and continue here.",
+        {
+          action: {
+            label: "Continue",
+            onClick: async () => {
+              await supabase
+                .from("users")
+                .update({ current_session_id: newSessionId })
+                .eq("id", user.id);
+
+              localStorage.setItem("session_id", newSessionId);
+
+              await redirectUserByRole(user.id);
+              setIsLoading(false);
+            },
+          },
+        }
       );
 
-      if (!confirmSwitch) {
-        await supabase.auth.signOut();
-        setError("Login cancelled — still logged in on your other device.");
-        setIsLoading(false);
-        return;
-      }
-
-      // ✅ Force login here (invalidate other session)
-      await supabase
-        .from("users")
-        .update({ current_session_id: newSessionId })
-        .eq("id", user.id);
-
-      localStorage.setItem("session_id", newSessionId);
+      setIsLoading(false);
+      return;
     } else {
       // ✅ Normal login (no active session elsewhere)
       await supabase
@@ -132,6 +135,7 @@ export function LoginForm() {
     await redirectUserByRole(user.id);
     setIsLoading(false);
   };
+
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);

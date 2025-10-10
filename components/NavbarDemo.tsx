@@ -42,11 +42,17 @@ export function NavbarDemo() {
 
     useEffect(() => {
         setIsMounted(true);
+        const supabase = createClient();
 
         const fetchUser = async () => {
-            const supabase = createClient();
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session?.user) return;
+            if (!session?.user) {
+                setUser(null);
+                setUserData(null);
+                setProfileUrl(null);
+                setRole(null);
+                return;
+            }
 
             setUser(session.user);
 
@@ -56,14 +62,10 @@ export function NavbarDemo() {
                 .eq("id", session.user.id)
                 .single();
 
-            if (error) {
-                console.error("Error fetching user profile:", error.message);
-                return;
-            }
+            if (error) return console.error(error);
 
             if (userData) {
-                setUserData(userData); // ✅ use userData here
-
+                setUserData(userData);
                 setRole(userData.role);
                 if (userData.profile_picture) {
                     const { data: publicUrlData } = supabase.storage
@@ -75,7 +77,17 @@ export function NavbarDemo() {
         };
 
         fetchUser();
+
+        // ✅ Listen to auth changes
+        const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+            fetchUser();
+        });
+
+        return () => {
+            listener.subscription.unsubscribe();
+        };
     }, []);
+
 
     const handleLogout = async () => {
         const supabase = createClient();
