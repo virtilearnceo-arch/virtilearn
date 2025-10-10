@@ -178,19 +178,24 @@ export function NavbarDemo() {
                             </Avatar>
                         ) : (
                             <>
-                                <NavbarButton
-                                    variant="primary"
+                                {/* Login Button - gradient like mobile */}
+                                <button
                                     onClick={() => router.push("/auth/login")}
+                                    className="px-3 py-2 rounded-lg bg-gradient-to-r from-[#ff9a4a] to-[#ff6f61] text-white font-semibold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
                                 >
                                     Login
-                                </NavbarButton>
-                                <NavbarButton
-                                    variant="secondary"
+                                </button>
+
+                                {/* Signup Button - bordered / lighter like mobile */}
+                                <button
                                     onClick={() => router.push("/auth/sign-up")}
+                                    className="px-3 py-2 rounded-lg border border-[#ff9a4a]/80 text-[#ff6f61] bg-white/70 dark:bg-[#1a1025]/40 font-semibold text-sm hover:bg-[#fff3ec] dark:hover:bg-[#2a1a35]/70 transition-all shadow-sm hover:shadow-md"
                                 >
                                     Sign up for free
-                                </NavbarButton>
+                                </button>
                             </>
+
+
                         )}
                     </div>
 
@@ -276,27 +281,37 @@ export function NavbarDemo() {
 
                         {/* Auth Buttons */}
                         {!user && (
-                            <div className="flex flex-col gap-2 mt-3">
+                            <div className="flex flex-col items-center justify-center gap-3 mt-6 text-center w-full">
+                                {/* Top separator */}
+                                <div className="w-3/4 h-px bg-gradient-to-r from-transparent via-[#ffb67f]/70 to-transparent dark:via-[#ff8c42]/40 mb-2" />
+
+                                {/* Login Button */}
                                 <button
                                     onClick={() => {
                                         setIsMobileMenuOpen(false);
                                         router.push("/auth/login");
                                     }}
-                                    className="w-full text-center px-4 py-2 rounded-md bg-[#ff8c42] text-white hover:bg-[#ff944e] transition font-semibold text-base"
+                                    className="w-[80%] max-w-xs mx-auto px-4 py-2.5 rounded-lg bg-gradient-to-r from-[#ff9a4a] to-[#ff6f61] text-white font-semibold shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all text-center"
                                 >
                                     Login
                                 </button>
+
+                                {/* Signup Button */}
                                 <button
                                     onClick={() => {
                                         setIsMobileMenuOpen(false);
                                         router.push("/auth/signup");
                                     }}
-                                    className="w-full text-center px-4 py-2 rounded-md border border-[#ff8c42] text-[#ff8c42] hover:bg-[#fff4eb] dark:hover:bg-[#1a1025]/80 transition font-semibold text-base"
+                                    className="w-[80%] max-w-xs mx-auto px-4 py-2.5 rounded-lg border border-[#ff9a4a]/80 text-[#ff6f61] bg-white/70 dark:bg-[#1a1025]/40 font-semibold hover:bg-[#fff3ec] dark:hover:bg-[#2a1a35]/70 transition-all shadow-sm hover:shadow-md text-center"
                                 >
                                     Sign up for free
                                 </button>
+
+                                {/* Bottom separator */}
+                                <div className="w-2/3 h-px mt-4 bg-gradient-to-r from-transparent via-[#ccc]/50 to-transparent dark:via-[#444]/50" />
                             </div>
                         )}
+
                     </MobileNavMenu>
 
 

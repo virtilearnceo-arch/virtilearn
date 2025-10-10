@@ -10,6 +10,7 @@ import Footer from "@/components/Landing/Footer";
 import { GridPattern } from "@/components/magicui/grid-pattern";
 import { cn } from "@/lib/utils";
 // import { Pointer } from "@/components/ui/pointer";
+import { SessionEnforcer } from "@/components/SessionEnforcer";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -100,6 +101,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -175,6 +177,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <NavbarDemo />
+          <SessionEnforcer />
+
           <SpeedInsights />
           {children}
           <div className="relative flex size-full items-center justify-center overflow-hidden rounded-lg border-none bg-background py-20 md:mt-12 mt-8 ">
