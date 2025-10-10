@@ -177,6 +177,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <NavbarDemo />
+
           <DisableRightClickAndDrag />
 
           <SpeedInsights />

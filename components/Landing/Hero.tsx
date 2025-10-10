@@ -91,7 +91,7 @@ export function HeroSectionOne() {
                 >
                     <div className="w-full overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
                         <img
-                            src="/images/hero_main_image.png"
+                            src="/images/hero_image.png"
                             alt="Internship platform preview"
                             className="aspect-[16/9] h-auto w-full object-cover"
                             height={1000}

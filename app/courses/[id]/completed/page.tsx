@@ -110,6 +110,9 @@ export default function CourseCompletedPage() {
     };
 
     // 🎨 Draw certificate canvas with template (always from Supabase)
+
+
+    // 🎨 Draw certificate canvas with template (always from Supabase)
     const drawCertificate = async (
         studentName: string,
         courseName: string,
@@ -119,7 +122,6 @@ export default function CourseCompletedPage() {
         canvas.width = 2000;
         canvas.height = 1414;
         const ctx = canvas.getContext("2d")!;
-
         return new Promise<string>(async (resolve, reject) => {
             try {
                 // ✅ Load font before drawing anything
@@ -134,17 +136,14 @@ export default function CourseCompletedPage() {
                 const { data: templateUrlData } = supabase.storage
                     .from("certificates")
                     .getPublicUrl("Course_Cerificate.png");
-
                 const template = new Image();
                 template.crossOrigin = "anonymous";
                 template.src = templateUrlData.publicUrl;
-
                 template.onload = () => {
                     ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
-
                     ctx.fillStyle = "#2c3133";
-                    // ctx.textAlign = "left";
 
+                    // ctx.textAlign = "left";
                     // 🟣 Student Name
                     ctx.textAlign = "center";
                     ctx.font = "550 65px 'Open Sans'";
@@ -163,10 +162,8 @@ export default function CourseCompletedPage() {
                     ctx.textAlign = "center";
                     ctx.font = "550 30px 'Open Sans'";
                     ctx.fillText(verificationCode, 1000, 1190);
-
                     resolve(canvas.toDataURL("image/png"));
                 };
-
                 template.onerror = (err) => reject(err);
             } catch (err) {
                 reject(err);
@@ -191,22 +188,25 @@ export default function CourseCompletedPage() {
             const base64 = dataUrl.split(",")[1];
             const blob = new Blob([Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))], { type: "image/png" });
 
-            // ✅ Upload directly to the public `certificates` bucket
+            // ✅ Upload certificate (allow overwrite just in case)
             const { error: uploadError } = await supabase.storage
                 .from("certificates")
                 .upload(fileName, blob, {
                     contentType: "image/png",
-                    upsert: false,
+                    upsert: true, // ✅ allow upload even if file exists
                 });
 
-            if (uploadError) throw uploadError;
+            if (uploadError) {
+                console.error("Upload error:", uploadError.message);
+                // ⚠️ Continue anyway to save record — don't stop execution
+            }
 
             // ✅ Get public URL (since bucket is public)
             const { data: publicUrlData } = supabase.storage
                 .from("certificates")
                 .getPublicUrl(fileName);
 
-            // ✅ Save record in `course_certificates` table
+            // ✅ Save record in DB even if file already existed
             const { data, error } = await supabase
                 .from("course_certificates")
                 .insert({
@@ -214,13 +214,13 @@ export default function CourseCompletedPage() {
                     course_id: courseId,
                     name_on_certificate: name,
                     certificate_url: publicUrlData.publicUrl,
-                    verification_code: verificationCode,   // ✅ save in DB
-
+                    verification_code: verificationCode,
                 })
                 .select()
                 .single();
 
             if (error) throw error;
+
             setCertificate(data);
         } catch (err) {
             console.error("Error generating certificate:", err);
@@ -228,8 +228,6 @@ export default function CourseCompletedPage() {
             setLoading(false);
         }
     };
-
-
 
 
     const downloadCertificate = (certificateUrl: string) => {
@@ -244,7 +242,7 @@ export default function CourseCompletedPage() {
 
 
     return (
-        <div className="p-10 max-w-3xl mx-auto text-center mt-16">
+        <div className="p-10 max-w-3xl mx-auto text-center">
             {!certificate ? (
                 <>
                     <h1 className="text-3xl font-extrabold mb-6">
