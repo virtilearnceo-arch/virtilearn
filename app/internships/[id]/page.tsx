@@ -455,7 +455,18 @@ export default function InternshipDetailsPage() {
                             {/* Demo Video */}
                             {internship.demo_url && (
                                 <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg mt-6 mb-6">
-                                    <iframe src={internship.demo_url} className="w-full h-full" allowFullScreen />
+                                    <video
+                                        src={internship.demo_url}
+                                        className="w-full h-full"
+                                        controls
+                                        controlsList="nodownload nofullscreen noremoteplayback"
+                                        onContextMenu={(e) => e.preventDefault()}
+                                        onDragStart={(e) => e.preventDefault()}
+                                        onDrop={(e) => e.preventDefault()}
+                                        disablePictureInPicture
+                                        playsInline
+                                    />
+                                    {/* Play indicator overlay */}
                                     <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
                                         🎬 Demo Video
                                     </div>
@@ -637,13 +648,13 @@ export default function InternshipDetailsPage() {
                                         <span className="text-neutral-700 dark:text-neutral-300">{internship.level}</span>
                                     </div>
                                 )}
-
                                 {internship.demo_url && (
                                     <div className="group flex flex-col items-center justify-center gap-2 p-3 rounded-xl bg-white dark:bg-neutral-900 shadow hover:shadow-lg hover:scale-105 transition-all duration-300">
                                         <Film className="h-6 w-6 text-orange-500 group-hover:animate-spin" />
                                         <span className="text-neutral-700 dark:text-neutral-300">Demo Available</span>
                                     </div>
                                 )}
+
 
                             </div>
                         </div>
@@ -860,12 +871,24 @@ export default function InternshipDetailsPage() {
                         {/* Demo Video */}
                         {internship.demo_url && (
                             <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg mt-6 mb-6">
-                                <iframe src={internship.demo_url} className="w-full h-full" allowFullScreen />
+                                <video
+                                    src={internship.demo_url}
+                                    className="w-full h-full"
+                                    controls
+                                    controlsList="nodownload nofullscreen noremoteplayback"
+                                    onContextMenu={(e) => e.preventDefault()}
+                                    onDragStart={(e) => e.preventDefault()}
+                                    onDrop={(e) => e.preventDefault()}
+                                    disablePictureInPicture
+                                    playsInline
+                                />
+                                {/* Play indicator overlay */}
                                 <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
                                     🎬 Demo Video
                                 </div>
                             </div>
                         )}
+
 
                         <Card
                             className="relative overflow-hidden border border-neutral-200 dark:border-neutral-700 

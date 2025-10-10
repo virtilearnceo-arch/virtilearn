@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 // import { Pointer } from "@/components/ui/pointer";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import DisableRightClickAndDrag from "@/components/DisableRightClickAndDrag";
 
 const defaultUrl = process.env.NEXT_PUBLIC_APP_URL
   ? `https://${process.env.NEXT_PUBLIC_APP_URL}`
@@ -176,6 +177,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <NavbarDemo />
+          <DisableRightClickAndDrag />
 
           <SpeedInsights />
           {children}

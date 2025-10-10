@@ -452,10 +452,16 @@ export default function CourseDetailsPage() {
                         {/* 🎥 Demo Video */}
                         {course.demo_url && (
                             <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg ring-1 ring-neutral-200 dark:ring-neutral-700 mt-6">
-                                <iframe
+                                <video
                                     src={course.demo_url}
                                     className="w-full h-full"
-                                    allowFullScreen
+                                    controls // show native controls
+                                    controlsList="nodownload  noremoteplayback" // disable download, fullscreen, remote
+                                    onContextMenu={(e) => e.preventDefault()} // disable right-click
+                                    onDragStart={(e) => e.preventDefault()}   // disable drag
+                                    onDrop={(e) => e.preventDefault()}        // disable drop
+                                    disablePictureInPicture
+                                    playsInline
                                 />
                                 {/* Play indicator overlay */}
                                 <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
@@ -463,6 +469,7 @@ export default function CourseDetailsPage() {
                                 </div>
                             </div>
                         )}
+
 
                         <Card
                             className="relative overflow-hidden border border-neutral-200 dark:border-neutral-700 
@@ -817,11 +824,15 @@ export default function CourseDetailsPage() {
 
                         {/* 🎥 Demo Video */}
                         {course.demo_url && (
-                            <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg ring-1 ring-neutral-200 dark:ring-neutral-700 mt-6 mb-4">
-                                <iframe
+                            <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg ring-1 ring-neutral-200 dark:ring-neutral-700 mt-6">
+                                <video
                                     src={course.demo_url}
                                     className="w-full h-full"
-                                    allowFullScreen
+                                    controls // show native controls
+                                    controlsList="nodownload" // hide download button
+                                    onContextMenu={(e) => e.preventDefault()} // disable right click
+                                    onDragStart={(e) => e.preventDefault()}   // disable drag
+                                    onDrop={(e) => e.preventDefault()}        // disable drop
                                 />
                                 {/* Play indicator overlay */}
                                 <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
@@ -829,6 +840,9 @@ export default function CourseDetailsPage() {
                                 </div>
                             </div>
                         )}
+
+
+
 
                         <Card
                             className="relative overflow-hidden border border-neutral-200 dark:border-neutral-700 
