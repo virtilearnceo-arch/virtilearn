@@ -1,21 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
-export default function SessionConflictClient() {
+export default function SessionConflictPage() {
     const supabase = createClient();
     const router = useRouter();
-    const searchParams = useSearchParams();
-
-    const userId = searchParams?.get("userId");
-    const sessionId = searchParams?.get("sessionId");
-
     const [handled, setHandled] = useState(false);
 
     useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const userId = searchParams.get("userId");
+        const sessionId = searchParams.get("sessionId");
+
         if (!userId || !sessionId) {
             router.replace("/auth/login");
             return;
@@ -24,6 +23,7 @@ export default function SessionConflictClient() {
         if (handled) return;
 
         const handleConflict = async () => {
+            // Fetch current session and role
             const { data: existingUser } = await supabase
                 .from("users")
                 .select("current_session_id, role")
@@ -42,21 +42,24 @@ export default function SessionConflictClient() {
                 return;
             }
 
-            // Show toast for conflict
+            // Show Sonner toast for conflict
             toast(
                 "You are already logged in on another device. Click 'Continue' to log out from there and continue here.",
                 {
-                    duration: 20000,
+                    duration: 20000, // 20 seconds
                     action: {
                         label: "Continue",
                         onClick: async () => {
+                            // Update Supabase session ID
                             await supabase
                                 .from("users")
                                 .update({ current_session_id: sessionId })
                                 .eq("id", userId);
 
+                            // Save session locally
                             localStorage.setItem("session_id", sessionId);
 
+                            // Redirect based on role
                             if (existingUser.role === "admin") router.replace("/admin/dashboard");
                             else router.replace("/courses");
                         },
@@ -68,7 +71,7 @@ export default function SessionConflictClient() {
         };
 
         handleConflict();
-    }, [handled, router, supabase, userId, sessionId]);
+    }, [handled, router, supabase]);
 
     return (
         <p className="text-center mt-10 text-gray-700 dark:text-gray-300">
