@@ -242,17 +242,17 @@ export default function CourseCompletedPage() {
 
 
     return (
-        <div className="p-10 max-w-3xl mx-auto text-center">
+        <div className="p-10 max-w-3xl mx-auto text-center text-gray-900 dark:text-gray-100 transition-colors duration-300">
             {!certificate ? (
                 <>
-                    <h1 className="text-3xl font-extrabold mb-6">
+                    <h1 className="text-3xl font-extrabold mb-6 text-gray-900 dark:text-gray-100">
                         🎉 Congrats on Completing {courseTitle || "the course"}!
                     </h1>
 
                     {/* Step 1: Review Gate */}
                     {!reviewSubmitted ? (
-                        <div className="bg-white p-6 shadow-lg rounded-2xl border mb-6">
-                            <h2 className="text-xl font-bold mb-3 text-purple-700">
+                        <div className="bg-white dark:bg-neutral-900 p-6 shadow-lg rounded-2xl border border-gray-200 dark:border-neutral-700 mb-6 transition-colors duration-300">
+                            <h2 className="text-xl font-bold mb-3 text-purple-700 dark:text-purple-400">
                                 ⭐ Leave a Review Before Unlocking Certificate
                             </h2>
                             <div className="flex justify-center gap-2 mb-4">
@@ -262,7 +262,7 @@ export default function CourseCompletedPage() {
                                         size={32}
                                         className={`cursor-pointer ${rating >= star
                                             ? "text-yellow-400 fill-yellow-400"
-                                            : "text-gray-300"
+                                            : "text-gray-300 dark:text-gray-600"
                                             }`}
                                         onClick={() => setRating(star)}
                                     />
@@ -272,12 +272,12 @@ export default function CourseCompletedPage() {
                                 placeholder="Share your experience..."
                                 value={reviewText}
                                 onChange={(e) => setReviewText(e.target.value)}
-                                className="mb-4"
+                                className="mb-4 bg-gray-50 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                             />
                             <Button
                                 onClick={submitReview}
                                 disabled={loading}
-                                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700"
                             >
                                 {loading ? "Submitting..." : "Submit Review"}
                             </Button>
@@ -285,11 +285,12 @@ export default function CourseCompletedPage() {
                     ) : (
                         <>
                             {/* Step 2: Certificate Disclaimer + Form */}
-                            <p className="mb-4 text-gray-600">
+                            <p className="mb-4 text-gray-600 dark:text-gray-300">
                                 ✅ Review submitted! Now generate your certificate.
                             </p>
-                            <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4 mb-4">
-                                <p className="text-sm text-yellow-800 font-medium">
+
+                            <div className="bg-yellow-50 dark:bg-neutral-800 border border-yellow-300 dark:border-yellow-600 rounded-lg p-4 mb-4 transition-colors duration-300">
+                                <p className="text-sm text-yellow-800 dark:text-yellow-400 font-medium">
                                     ⚠️ Disclaimer: You can generate your certificate only ONCE.
                                     Please make sure your name is correct before confirming.
                                     Once created, it cannot be changed or overwritten.
@@ -300,9 +301,14 @@ export default function CourseCompletedPage() {
                                         id="confirm"
                                         checked={confirmed}
                                         onChange={(e) => setConfirmed(e.target.checked)}
+                                        className="accent-yellow-500 dark:accent-yellow-400"
                                     />
-                                    <label htmlFor="confirm" className="text-sm text-gray-700">
-                                        I confirm that my name is correct and I want to generate my certificate.
+                                    <label
+                                        htmlFor="confirm"
+                                        className="text-sm text-gray-700 dark:text-gray-300"
+                                    >
+                                        I confirm that my name is correct and I want to generate my
+                                        certificate.
                                     </label>
                                 </div>
                             </div>
@@ -312,62 +318,66 @@ export default function CourseCompletedPage() {
                                     placeholder="Your full name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="max-w-xs"
+                                    className="max-w-xs bg-gray-50 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                                 />
                                 <Button
                                     onClick={generateCertificate}
                                     disabled={loading || !confirmed}
-                                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700"
                                 >
                                     {loading ? "Generating..." : "Generate Certificate"}
                                 </Button>
                             </div>
+
                             {previewUrl && (
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-2">🔎 Preview</h3>
+                                    <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                                        🔎 Preview
+                                    </h3>
                                     <img
                                         src={previewUrl}
                                         alt="Certificate Preview"
-                                        className="border rounded-lg shadow-lg mx-auto mb-6"
+                                        className="border border-gray-300 dark:border-neutral-700 rounded-lg shadow-lg mx-auto mb-6"
                                     />
 
                                     {/* 🔴 Warning Message */}
-                                    <p className="mt-4 text-center text-red-600 font-bold bg-red-100 px-4 py-2 rounded-lg border border-red-300">
-                                        ⚠️ Do not refresh the page until the <span className="underline">Download Certificate</span> button is visible.
+                                    <p className="mt-4 text-center text-red-700 dark:text-red-400 font-bold bg-red-100 dark:bg-red-900/30 px-4 py-2 rounded-lg border border-red-300 dark:border-red-700">
+                                        ⚠️ Do not refresh the page until the{" "}
+                                        <span className="underline">Download Certificate</span> button
+                                        is visible.
                                     </p>
                                 </div>
                             )}
-
                         </>
                     )}
                 </>
             ) : (
                 <div>
-                    <h1 className="text-3xl font-extrabold mb-4 text-purple-700">
+                    <h1 className="text-3xl font-extrabold mb-4 text-purple-700 dark:text-purple-400">
                         🎉 Your Certificate is Ready!
                     </h1>
                     <img
                         src={certificate.certificate_url}
                         alt="Certificate"
-                        className="border-4 border-purple-600 rounded-xl shadow-2xl mx-auto mb-6"
+                        className="border-4 border-purple-600 dark:border-purple-500 rounded-xl shadow-2xl mx-auto mb-6"
                     />
                     <div className="flex justify-center gap-4">
                         <Button
                             onClick={() => window.open(certificate.certificate_url, "_blank")}
-                            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2"
+                            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 px-6 py-2"
                         >
                             View Certificate
                         </Button>
                         <Button
                             onClick={() => downloadCertificate(certificate.certificate_url)}
-                            className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-2"
+                            className="bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 px-6 py-2"
                         >
                             Download Certificate
                         </Button>
                     </div>
-
                 </div>
             )}
         </div>
+
     );
 }

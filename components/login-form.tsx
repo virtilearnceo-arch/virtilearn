@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -25,6 +24,7 @@ import {
   InputOTPSeparator,
 } from "@/components/ui/input-otp";
 import { toast } from "sonner";
+import { Spinner } from "./ui/spinner";
 
 export function LoginForm() {
   const supabase = createClient();
@@ -39,7 +39,6 @@ export function LoginForm() {
   const [userId, setUserId] = useState("");
   const [otp, setOtp] = useState("");
 
-  // Redirect user based on role
   const redirectUserByRole = async (userId: string) => {
     const { data, error } = await supabase
       .from("users")
@@ -56,31 +55,35 @@ export function LoginForm() {
     else router.push("/courses");
   };
 
-  // handleLogin
+  // Handle Login → Step 1: Verify credentials first
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
     try {
-      // 1️⃣ Check if email exists in your users table
-      const { data: userData } = await supabase
-        .from("users")
-        .select("id")
-        .eq("email", email)
-        .maybeSingle();
+      // 1️⃣ Try logging in with email & password to check if valid
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      if (!userData?.id) {
-        setError("Invalid credentials");
+      // ❌ Wrong credentials
+      if (authError || !authData?.user?.id) {
+        setError("Invalid email or password");
         return;
       }
 
-      setUserId(userData.id);
+      const validUserId = authData.user.id;
+      setUserId(validUserId);
 
-      // 2️⃣ Send OTP
+      // 2️⃣ Immediately sign out (prevent full login before OTP)
+      await supabase.auth.signOut();
+
+      // 3️⃣ Send OTP
       const res = await fetch("/api/send-otp", {
         method: "POST",
-        body: JSON.stringify({ email, userId: userData.id }),
+        body: JSON.stringify({ email, userId: validUserId }),
       }).then((r) => r.json());
 
       if (res.error) {
@@ -88,6 +91,7 @@ export function LoginForm() {
         return;
       }
 
+      toast.success("OTP sent to your email");
       setOtpDialogOpen(true);
     } catch (err) {
       console.error(err);
@@ -96,71 +100,100 @@ export function LoginForm() {
       setIsLoading(false);
     }
   };
+
+  // Handle OTP Verification → Step 2: Verify OTP, then sign in
   const handleVerifyOtp = async () => {
     if (otp.length !== 6) {
       toast.error("Enter a valid 6-digit OTP");
-      return; // keep dialog open
+      return;
     }
 
     setIsLoading(true);
 
     try {
+      // 1️⃣ Verify OTP with backend
       const res = await fetch("/api/verify-otp", {
         method: "POST",
-        body: JSON.stringify({ userId, otp, email, password }),
+        body: JSON.stringify({ userId, otp, email }),
       }).then((r) => r.json());
 
       if (res.error) {
-        // ❌ OTP verification failed
         toast.error(res.error || "Incorrect OTP. Please try again.");
-        return; // keep dialog open
+        return;
       }
 
-      // ✅ Now try signing in the user with email & password
+      // 2️⃣ If OTP verified → actually log the user in
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error || !data.user?.id) {
-        // ❌ Password or login failed
+      if (error || !data?.user?.id) {
         toast.error(error?.message || "Login failed after OTP. Try again.");
-        return; // keep dialog open
+        return;
       }
 
-      // ✅ Success: redirect user
+      toast.success("Login successful!");
       await redirectUserByRole(data.user.id);
-
-      // ✅ Only close OTP dialog on full success
       setOtpDialogOpen(false);
     } catch (err) {
       console.error(err);
       toast.error("An error occurred. Please try again.");
-      // ❌ Keep dialog open
     } finally {
       setIsLoading(false);
     }
   };
 
 
+  // const handleVerifyOtp = async () => {
+  //   if (otp.length !== 6) {
+  //     toast.error("Enter a valid 6-digit OTP");
+  //     return;
+  //   }
 
+  //   setIsLoading(true);
+  //   try {
+  //     const res = await fetch("/api/verify-otp", {
+  //       method: "POST",
+  //       body: JSON.stringify({ userId, otp, email }),
+  //     }).then((r) => r.json());
 
+  //     if (res.error) {
+  //       toast.error(res.error || "Incorrect OTP. Please try again.");
+  //       return;
+  //     }
 
+  //     await redirectUserByRole(userId);
+  //     setOtpDialogOpen(false);
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error("An error occurred. Please try again.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
-  // Google login (direct)
+  // Google Login
   const handleGoogleLogin = async () => {
     setIsLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback` },
-    });
-    if (error) toast.error(error.message);
-    setIsLoading(false);
+    try {
+      const { error: googleError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback` },
+      });
+
+      if (googleError) toast.error(googleError.message);
+    } catch (err) {
+      console.error(err);
+      toast.error("Google login failed.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <>
-      {/* Login Form */}
+    <div className="flex flex-col gap-6">
+      {/* Email/Password Login Form */}
       <form
         onSubmit={handleLogin}
         className="flex flex-col gap-6 p-8 rounded-3xl bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 shadow-2xl dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900"
@@ -212,30 +245,44 @@ export function LoginForm() {
           <Button type="submit" className="w-full py-3 text-lg font-bold">
             {isLoading ? "Loading..." : "Login"}
           </Button>
+        </div>
+      </form>
+      {/* Google Login Card (Outside Form) */}
+      <div className="w-full max-w-md mx-auto mt-1 p-6 rounded-3xl bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 shadow-2xl flex flex-col gap-4">
 
-          <div className="relative flex items-center justify-center my-4">
-            <div className="flex-grow border-t border-gray-300 dark:border-gray-700"></div>
-            <span className="mx-3 text-sm text-gray-500 bg-white dark:bg-neutral-900 px-2">
-              Or continue with
-            </span>
-            <div className="flex-grow border-t border-gray-300 dark:border-gray-700"></div>
-          </div>
-
-
-          <Button
-            variant="outline"
-            className="w-full flex items-center justify-center gap-2"
-            onClick={handleGoogleLogin}
-            disabled={isLoading}
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M21.35 11.1h-9.33v2.89h5.41c-.23 1.28-1.49 3.73-5.41 3.73-3.25 0-5.9-2.68-5.9-5.99s2.65-5.99 5.9-5.99c1.85 0 3.1.8 3.81 1.49l2.61-2.52c-1.64-1.52-3.78-2.42-6.42-2.42-5.3 0-9.6 4.29-9.6 9.55s4.3 9.55 9.6 9.55c5.55 0 9.22-3.9 9.22-9.36 0-.63-.06-1.11-.15-1.5z" />
-            </svg>
-            Continue with Google
-          </Button>
+        {/* Divider with text */}
+        <div className="relative flex items-center justify-center">
+          <div className="flex-grow border-t border-gray-300 dark:border-gray-700"></div>
+          <span className="mx-3 text-sm text-gray-500 dark:text-gray-400 bg-white dark:bg-neutral-900 px-2">
+            Or continue with
+          </span>
+          <div className="flex-grow border-t border-gray-300 dark:border-gray-700"></div>
         </div>
 
-        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+        {/* Google Login Button */}
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full flex items-center justify-center gap-2 py-3 text-lg font-semibold border border-gray-300 dark:border-gray-600 rounded-xl shadow-md hover:opacity-90 transition-all bg-white dark:bg-neutral-800"
+          onClick={handleGoogleLogin}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <Spinner className="w-5 h-5 text-gray-500" />
+              <span>Loading...</span>
+            </div>
+          ) : (
+            <>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21.35 11.1h-9.33v2.89h5.41c-.23 1.28-1.49 3.73-5.41 3.73-3.25 0-5.9-2.68-5.9-5.99s2.65-5.99 5.9-5.99c1.85 0 3.1.8 3.81 1.49l2.61-2.52c-1.64-1.52-3.78-2.42-6.42-2.42-5.3 0-9.6 4.29-9.6 9.55s4.3 9.55 9.6 9.55c5.55 0 9.22-3.9 9.22-9.36 0-.63-.06-1.11-.15-1.5z" />
+              </svg>
+              Continue with Google
+            </>
+          )}
+        </Button>
+
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
           Don&apos;t have an account?{" "}
           <Link
             href="/auth/sign-up"
@@ -244,7 +291,12 @@ export function LoginForm() {
             Sign up
           </Link>
         </p>
-      </form>
+      </div>
+
+
+
+
+
 
       {/* OTP Dialog */}
       <AlertDialog open={otpDialogOpen} onOpenChange={setOtpDialogOpen}>
@@ -269,10 +321,7 @@ export function LoginForm() {
             <div className="flex flex-col items-center space-y-4 w-full">
               <InputOTP
                 maxLength={6}
-                onComplete={(val: string) => {
-                  console.log("OTP typed by user:", val); // <-- log OTP input
-                  setOtp(val);
-                }}
+                onComplete={(val: string) => setOtp(val)}
                 className="flex justify-center gap-3 sm:gap-4"
               >
                 <InputOTPGroup className="flex gap-3 sm:gap-4">
@@ -303,17 +352,18 @@ export function LoginForm() {
           <AlertDialogFooter className="flex flex-col gap-3 w-full">
             <button
               type="button"
-              onClick={() => {
-                console.log("OTP sent for verification:", otp);
-                handleVerifyOtp();
-              }}
+              onClick={handleVerifyOtp}
               className="w-full py-3 text-base sm:text-lg font-semibold bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 hover:opacity-90 text-white rounded-xl shadow-md transition-all"
             >
               {isLoading ? "Verifying..." : "Verify OTP"}
             </button>
 
             <AlertDialogCancel
-              onClick={() => setOtpDialogOpen(false)}
+              onClick={() => {
+                setOtpDialogOpen(false);
+                setOtp("");
+                setUserId("");
+              }}
               className="w-full py-2 text-sm rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-neutral-800 transition-all text-gray-700 dark:text-gray-300"
             >
               Cancel
@@ -322,6 +372,6 @@ export function LoginForm() {
         </AlertDialogContent>
       </AlertDialog>
 
-    </>
+    </div>
   );
 }
