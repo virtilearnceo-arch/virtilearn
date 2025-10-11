@@ -66,6 +66,10 @@ export function ForgotPasswordForm({
               If you registered with this email, you will receive a password
               reset link shortly. Please check your inbox and spam folder.
             </p>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              Note: It may take up to <strong>5 minutes</strong> for the email to arrive.
+              If you don’t receive it, please try again after 5 minutes.
+            </p>
             <div className="mt-6">
               <Link
                 href="/auth/login"
@@ -77,6 +81,8 @@ export function ForgotPasswordForm({
           </CardContent>
         </Card>
       ) : (
+        // ...rest of your existing code
+
         <Card className="w-full max-w-md rounded-3xl shadow-2xl bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900">
           <CardHeader className="text-center">
             <CardTitle className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500">
